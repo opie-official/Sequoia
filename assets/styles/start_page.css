@@ -1,0 +1,67 @@
+:root {
+    --red: #C74444;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;overflow: hidden;
+}
+
+html, body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+
+}
+
+body {
+    position: relative;
+}
+
+#root {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background: var(--red);
+}
+
+#image-container {
+    position: relative;
+    width: 13%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1/1;
+    animation: start-animation 1.5s;
+    animation-timing-function: ease-in-out;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+
+@keyframes start-animation {
+    0%{
+        top: 200%;
+    }
+
+    30%{
+        top: 200%;
+    }
+
+
+    90%{
+        top: 0;
+    }
+    100%{
+        top: 0;
+    }
+}
