@@ -1,0 +1,191 @@
+#spaces {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+}
+
+#undo-redo {
+    z-index: 30;
+    position: absolute;
+    top: 2%;
+    display: flex;
+    width: 10%;
+    height: 5%;
+    gap: 5%;
+    align-items: center;
+    justify-content: center;
+}
+
+#undo {
+    height: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 100px;
+    background: #EE4646;
+    border: 0 solid;
+
+    &:hover {
+        background: #FF6666;
+    }
+}
+
+#redo {
+    height: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 100px;
+    background: #46EE4C;
+    border: 0 solid;
+
+    &:hover {
+        background: #8BFF82;
+    }
+}
+
+
+#space-content {
+    position: relative;
+    width: 100%;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10%;
+}
+
+#space-space {
+    width: 40%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#space-logo {
+    width: 20%;
+    aspect-ratio: 1/1;
+    background: var(--red);
+    border-radius: 20px;
+}
+
+#space-name {
+    width: 40%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    color: white;
+    font-size: 20pt;
+}
+
+#space-list-content {
+    position: relative;
+    width: 40%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5%;
+}
+
+#space-new {
+    position: relative;
+    width: 5%;
+    aspect-ratio: 1/1;
+    background: transparent;
+    border: 0 solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#space-new > img {
+    width: 90%;
+}
+
+#space-list {
+    position: relative;
+    width: 100%;
+    height: 90%;
+    flex: 0 0 1;
+}
+
+
+.space-element {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 5%;
+    overflow: hidden;
+    background: transparent;
+    color: white;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+
+#custom-prompt {
+    z-index: 30;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 50%;
+    background: var(--main);
+    border: 2px solid #BABABA;
+    border-radius: 30px;
+    gap: 20%;
+}
+
+#custom-prompt-p {
+    font-size: 20pt;
+    color: white;
+}
+
+#custom-prompt-input {
+    background: black;
+    color: white;
+    font-size: 30pt;
+    width: 80%;
+    height: 10%;
+    border: 0 solid;
+
+}
+
+#custom-prompt-group {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20%;
+
+}
+
+#custom-prompt-group > button {
+    width: 30%;
+    height: 90%;
+    border-radius: 20px;
+    font-size: 20pt;
+    border: 2px solid #BABABA;
+    background: var(--main);
+    color: white;
+    &:hover{
+        background: rgba(255,255,255,0.1);
+    }
+}
+
+#custom-prompt-input:focus {
+    outline: none;
+}

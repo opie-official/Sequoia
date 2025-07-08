@@ -5,7 +5,7 @@
 
     "module": "none",
     /* Specify what module code is generated. */
-    "esModuleInterop": true,
+    "esModuleInterop": false,
     /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
     // "preserveSymlinks": true,                         /* Disable resolving symlinks to their realpath. This correlates to the same flag in node. */
     "forceConsistentCasingInFileNames": true,
@@ -16,7 +16,8 @@
     /* Enable all strict type-checking options. */
     "skipLibCheck": true,
     /* Skip type checking all .d.ts files. */
-    "outDir": "../../dist/render"
+    "outDir": "../../dist/render",
+//    "outFile": "../../dist/render/render.js"
   },
   "include": ["**/*.ts"]
 }

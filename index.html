@@ -1,12 +1,23 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
+    <title>Title</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+    <link rel="stylesheet" href="assets/styles/main_page.css">
+    <link rel="stylesheet" href="assets/styles/spaces.css">
 </head>
 <body>
-
-
+<div id="title-bar">
+    <button class="title-bar-button" id="title-wrap"><img alt="" src="assets/images/title-bar-swap.svg"></button>
+    <button class="title-bar-button" id="title-resize"><img alt="" src="assets/images/title-bar-resize.svg"></button>
+    <button class="title-bar-button" id="title-close"><img alt="" src="assets/images/title-bar-close.svg"></button>
+</div>
+<div id="root">
+</div>
+<script src="dist/render/utils.js"></script>
+<script src="dist/render/audio_handlers.js"></script>
+<script src="dist/render/spaces.js"></script>
 <script src="dist/render/render.js"></script>
 </body>
 </html>

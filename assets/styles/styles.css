@@ -1,0 +1,71 @@
+:root{
+    --red: #C74444;
+    --main: #19191B;
+    --aside: #232427;
+    --footer: #2A2B2D;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Ubuntu, sans-serif;
+}
+
+html,body{
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+}
+
+#title-bar{
+    z-index: 20;
+    width: 100%;
+    height: 30px;
+    display:flex;
+    justify-content: flex-end;
+    align-items: center;
+    -webkit-app-region: drag;
+    background: transparent;
+    gap: 1%;
+    position: absolute;
+}
+
+
+.title-bar-button{
+    -webkit-app-region: no-drag;
+    height: 100%;
+    aspect-ratio: 1/1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0 solid;
+    &:hover{
+        background: rgba(255,255,255, 0.1);
+    }
+}
+#title-close>img{
+    width: 30% !important;
+    object-fit: none !important;
+}
+#title-close:hover{
+    background: #D53232;
+}
+.title-bar-button>img{
+    width: 50%;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+
+
+#root{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: var(--main);
+}

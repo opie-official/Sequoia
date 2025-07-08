@@ -1,0 +1,64 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UTILS = void 0;
+const fs = __importStar(require("fs"));
+const path = __importStar(require("node:path"));
+var UTILS;
+(function (UTILS) {
+    function getSettings() {
+        return JSON.parse(fs.readFileSync(path.join(__dirname, "../../preferences/settings.json"), "utf-8"));
+    }
+    UTILS.getSettings = getSettings;
+    function createSpace(name, path) {
+        const space = {
+            name,
+            path,
+            playlists: []
+        };
+        const settings = getSettings();
+        settings.spaces.push(space);
+        saveSettings(settings);
+    }
+    UTILS.createSpace = createSpace;
+    function saveSettings(settings) {
+        fs.writeFileSync(path.join(__dirname, "../../preferences/settings.json"), JSON.stringify(settings));
+    }
+    UTILS.saveSettings = saveSettings;
+    function getAllSpaces() {
+        const settings = getSettings();
+        return settings.spaces;
+    }
+    UTILS.getAllSpaces = getAllSpaces;
+    function checkSpaces() {
+        const settings = getSettings();
+        const spaces = settings.spaces;
+        if (spaces.length < 1) {
+            return false;
+        }
+        return true;
+    }
+    UTILS.checkSpaces = checkSpaces;
+})(UTILS || (exports.UTILS = UTILS = {}));
