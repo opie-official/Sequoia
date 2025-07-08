@@ -28,7 +28,6 @@ export async function parseFiles(path_: string): Promise<Meta[]> {
             }else{
                 pic = ""
             }
-            console.log(meta);
             result.push({
                 name: file.replace(".mp3", "").length>25? file.replace(".mp3", "").slice(0, 22)+"..." : file.replace("mp3", ""),
                 artist: meta.common.artist as string,

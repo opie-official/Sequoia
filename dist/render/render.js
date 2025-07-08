@@ -34,7 +34,9 @@ async function gotoSpaces(root) {
         createSpaceProcess();
     });
     const undo = document.getElementById("undo");
-    undo.addEventListener("click", async () => { await gotoMain(root); });
+    undo.addEventListener("click", async () => {
+        await gotoMain(root);
+    });
 }
 /**
  *
@@ -81,5 +83,113 @@ async function gotoMain(root) {
     const space = document.getElementById("main-spaces-logo");
     space.addEventListener("click", async () => {
         await gotoSpaces(root);
+    });
+    const volume_range = document.getElementById("volume");
+    const audio = document.getElementById("main-audio");
+    const duration = document.getElementById("duration");
+    const p_duration = document.getElementById("footer-duration-value");
+    const p_volume = document.getElementById("volume-value");
+    const pause_button = document.getElementById("main-pause");
+    const rewind_prev = document.getElementById("main-rewind-prev");
+    const rewind_next = document.getElementById("main-rewind-next");
+    const next_button = document.getElementById("main-next");
+    const prev_button = document.getElementById("main-previous");
+    const loop_button = document.getElementById("other-loop");
+    const random_button = document.getElementById("other-random");
+    p_volume.textContent = volume_range.value;
+    volume_range.addEventListener("input", () => {
+        p_volume.textContent = volume_range.value;
+        audio.volume = parseInt(volume_range.value) / 100;
+    });
+    audio.addEventListener("timeupdate", () => {
+        duration.value = `${audio.currentTime}`;
+        p_duration.textContent = `${Math.round(audio.currentTime)}`;
+    });
+    audio.addEventListener("playing", () => {
+        duration.max = `${audio.duration}`;
+    });
+    duration.addEventListener("input", () => {
+        // audio.pause();
+        audio.currentTime = parseFloat(duration.value);
+    });
+    duration.addEventListener("change", () => {
+        // audio.play()
+    });
+    pause_button.addEventListener("click", () => {
+        const img = pause_button.querySelector("img");
+        if (__paused__) {
+            audio.play();
+            __paused__ = false;
+            img.src = "assets/images/play.svg";
+        }
+        else {
+            audio.pause();
+            __paused__ = true;
+            img.src = "assets/images/pause.svg";
+        }
+    });
+    rewind_next.addEventListener("click", () => {
+        audio.currentTime += 10;
+    });
+    rewind_prev.addEventListener("click", () => {
+        audio.currentTime -= 10;
+    });
+    next_button.addEventListener("click", () => {
+        __current_index__++;
+        if (__current_index__ > __meta__.length - 1) {
+            __current_index__ = 0;
+        }
+        __current__ = __meta__[__current_index__].path;
+        playAudio(__current__);
+    });
+    prev_button.addEventListener("click", () => {
+        __current_index__--;
+        if (__current_index__ < 0) {
+            __current_index__ = __meta__.length - 1;
+        }
+        __current__ = __meta__[__current_index__].path;
+        playAudio(__current__);
+    });
+    audio.addEventListener("ended", () => {
+        if (__looped__) {
+            setTimeout(() => {
+                playAudio(__current__);
+            }, 1000);
+        }
+        else if (__randomed__) {
+            __current_index__ = Math.floor(Math.random() * (__meta__.length - 1));
+            __current__ = __meta__[__current_index__].path;
+            setTimeout(() => {
+                playAudio(__current__);
+            }, 1000);
+        }
+        else {
+            __current_index__++;
+            if (__current_index__ > __meta__.length - 1) {
+                __current_index__ = 0;
+            }
+            __current__ = __meta__[__current_index__].path;
+            setTimeout(() => {
+                playAudio(__current__);
+            }, 1000);
+        }
+    });
+    loop_button.addEventListener("click", () => {
+        __looped__ = !__looped__;
+        if (__looped__) {
+            loop_button.classList.add("lighted");
+        }
+        else {
+            loop_button.classList.remove("lighted");
+        }
+    });
+    random_button.addEventListener("click", () => {
+        __randomed__ = !__randomed__;
+        if (__randomed__) {
+            random_button.classList.add("lighted");
+        }
+        else {
+            random_button.classList.remove("lighted");
+        }
     });
 }

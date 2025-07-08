@@ -113,8 +113,6 @@ namespace FABRICS {
         startWindow.loadFile(path.join(__dirname, "../../assets/pages/start_page.html")).then(() => {
             startWindow.show();
 
-        }).catch(() => {
-            console.log(`error: ${path.join(__dirname, "../../assets/pages/start_page.html")}`)
         });
         startWindow.show();
 
@@ -152,9 +150,7 @@ app.whenReady().then(async () => {
 
 
     ipcMain.handle("system:music_meta", async (e: IpcMainInvokeEvent, path_: string) => {
-        const res = parseFiles(path_);
-        // console.log(await res)
-        return res
+        return parseFiles(path_);
     });
 
 

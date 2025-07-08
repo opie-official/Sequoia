@@ -89,7 +89,6 @@ async function paintSpaces(spaces: ISpace[]) {
         data.removeChild(data.firstChild);
     }
     data.appendChild(document.createTextNode(settings.spaces[__current_space__].name))
-    console.log(__current_space__)
 
     const list = document.getElementById("space-list") as HTMLDivElement;
 
@@ -126,7 +125,6 @@ function spaceFabric(parent: HTMLDivElement, index: number, name: string, path: 
 
     body.append(_number, _name, _path);
         body.addEventListener("click", async () => {
-            console.log("clicked")
             await select(body as HTMLDivElement)
         })
 
