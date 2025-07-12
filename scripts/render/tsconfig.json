@@ -18,6 +18,8 @@
     /* Skip type checking all .d.ts files. */
     "outDir": "../../dist/render",
 //    "outFile": "../../dist/render/render.js"
+
+    "rootDir": "./"
   },
-  "include": ["**/*.ts"]
+  "include": ["./**/*.ts"]
 }
