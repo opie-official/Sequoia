@@ -65,7 +65,6 @@ interface API {
     closeWindow: () => void
     resizeWindow: () => void
     wrapWindow: () => void,
-    getPage: (page: string) => Promise<[boolean, string]>,
     getAllSpaces: () => Promise<ISpace[]>,
     getSettings: () => Promise<ISettings>,
     getSpace: (name: string) => Promise<ISpace>,
@@ -406,7 +405,6 @@ function secondsToTime(seconds: number) {
 /**
  * Select a new space
  * @param index
- * @param body
  */
 async function select(index: number) {
     manager.settings.current_space = index;

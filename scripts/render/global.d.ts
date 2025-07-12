@@ -24,7 +24,6 @@ declare global {
             closeWindow: () => void
             resizeWindow: () => void
             wrapWindow: () => void,
-            getPage: (page:string) => Promise<[boolean, string]>,
             getAllSpaces: ()=>Promise<ISpace[]>,
             getSettings: ()=>Promise<ISettings>,
             getSpace: (name: string) => Promise<ISpace>,
