@@ -1,6 +1,5 @@
 import * as fs from "fs"
 import * as path from "node:path";
-import {get} from "animejs";
 
 
 export namespace UTILS {
@@ -31,10 +30,10 @@ export namespace UTILS {
 
     export function createSpace(name: string, path: string) {
 
-        const space: ISpace={
-          name,
-          path,
-          playlists:[]
+        const space: ISpace = {
+            name,
+            path,
+            playlists: []
         };
 
         const settings = getSettings();
@@ -43,20 +42,36 @@ export namespace UTILS {
     }
 
 
-    export function saveSettings(settings:ISettings){
+    export function saveSettings(settings: ISettings) {
         fs.writeFileSync(path.join(__dirname, "../../preferences/settings.json"), JSON.stringify(settings));
     }
-    export function getAllSpaces(): ISpace[]{
+
+    export function getAllSpaces(): ISpace[] {
         const settings = getSettings();
-       return settings.spaces;
+        return settings.spaces;
     }
 
     export function checkSpaces(): boolean {
         const settings = getSettings();
         const spaces = settings.spaces;
-        if (spaces.length < 1) {
-            return false;
+        return spaces.length >= 1;
+
+    }
+}
+
+
+export namespace CHECK {
+
+
+    export function startCheck() {
+
+    }
+
+
+    function checkSettings(): boolean {
+        if (fs.existsSync(path.join(__dirname, "../../preferences/settings.json"))) {
+
         }
-        return true;
+        return false;
     }
 }

@@ -13,6 +13,8 @@ export interface Meta {
 
 
 export async function parseFiles(path_: string): Promise<Meta[]> {
+
+
     const files = await readdir(path_);
     const result: Meta[] = []
     for (const file of files) {
@@ -29,7 +31,7 @@ export async function parseFiles(path_: string): Promise<Meta[]> {
                 pic = ""
             }
             result.push({
-                name: file.replace(".mp3", "").length>25? file.replace(".mp3", "").slice(0, 22)+"..." : file.replace("mp3", ""),
+                 name: file.replace(".mp3", ""),//.length>25? file.replace(".mp3", "").slice(0, 22)+"..." : file.replace("mp3", ""),
                 artist: meta.common.artist as string,
                 album: meta.common.album as string,
                 duration: meta.format.duration as number,
@@ -39,5 +41,6 @@ export async function parseFiles(path_: string): Promise<Meta[]> {
         } catch {
         }
     }
+
     return result;
 }

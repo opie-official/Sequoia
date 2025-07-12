@@ -1,18 +1,18 @@
-:root{
+:root {
     --red: #C74444;
     --main: #19191B;
     --aside: #232427;
     --footer: #2A2B2D;
 }
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: Ubuntu, sans-serif;
 }
 
-html,body{
+html, body {
     width: 100vw;
     height: 100vh;
     position: absolute;
@@ -20,11 +20,33 @@ html,body{
     flex-direction: column;
 }
 
-#title-bar{
+.disabled {
+    z-index: -1 !important;
+    display: none;
+}
+
+.toggled {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.clicked {
+    filter: brightness(2) !important;
+}
+
+.toggled-playlist {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.enabled {
+    top: 0;
+    left: 0;
+}
+
+#title-bar {
     z-index: 20;
     width: 100%;
     height: 30px;
-    display:flex;
+    display: flex;
     justify-content: flex-end;
     align-items: center;
     -webkit-app-region: drag;
@@ -34,7 +56,7 @@ html,body{
 }
 
 
-.title-bar-button{
+.title-bar-button {
     -webkit-app-region: no-drag;
     height: 100%;
     aspect-ratio: 1/1;
@@ -44,28 +66,77 @@ html,body{
     justify-content: center;
     background: transparent;
     border: 0 solid;
-    &:hover{
-        background: rgba(255,255,255, 0.1);
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
     }
 }
-#title-close>img{
+
+#title-close > img {
     width: 30% !important;
     object-fit: none !important;
 }
-#title-close:hover{
+
+#title-close:hover {
     background: #D53232;
 }
-.title-bar-button>img{
+
+.title-bar-button > img {
     width: 50%;
     object-fit: contain;
     cursor: pointer;
 }
 
 
-
-#root{
+#root {
     width: 100%;
     height: 100%;
     position: relative;
     background: var(--main);
+    overflow: hidden;
+}
+
+
+.error {
+    position: absolute;
+    z-index: 30;
+    width: 50%;
+    height: 15%;
+    top: -30%;
+    left: 25%;
+    background: linear-gradient(45deg, rgba(227, 71, 71, 0.5), rgba(115, 31, 31, 0.5));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+    animation: error-anima 3s;
+    outline: 5px solid #ec5959;
+    border-radius: 30px;
+
+}
+
+.error-p {
+    color: white;
+    font-size: 20pt;
+}
+
+
+@keyframes error-anima {
+    0% {
+        top: -30%;
+    }
+
+    20% {
+        top: 5%;
+    }
+
+
+    60% {
+        top: 5%;
+    }
+
+    80% {
+        top: -30%;
+    }
 }

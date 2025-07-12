@@ -11,9 +11,9 @@ electron_1.contextBridge.exposeInMainWorld("__API__", {
     wrapWindow: () => {
         electron_1.ipcRenderer.send("system:wrap");
     },
-    getPage: async (page) => {
-        return await electron_1.ipcRenderer.invoke("display:page", page);
-    },
+    // getPage: async (page: string): Promise<[boolean, string]> => {
+    //     return await ipcRenderer.invoke("display:page", page);
+    // },
     getAllSpaces: async () => {
         return await electron_1.ipcRenderer.invoke("system:all_spaces");
     },

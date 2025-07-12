@@ -1,4 +1,4 @@
-import {BrowserWindow, IpcMainInvokeEvent, ipcMain, screen, app} from "electron"
+import {BrowserWindow, IpcMainInvokeEvent, ipcMain, screen, app, nativeImage} from "electron"
 import * as fs from "fs"
 import * as path from "path"
 import * as utils from "./utils"
@@ -11,26 +11,25 @@ let __window_maximized__ = false;
 
 let win: BrowserWindow;
 let startWindow: BrowserWindow;
-
 /**
  *
  */
-namespace HANDLERS {
-
-    /**
-     *
-     * @param e
-     * @param page
-     */
-    export async function returnPage(e: IpcMainInvokeEvent, page: string) {
-        try {
-            const text = fs.readFileSync(path.join(__dirname, `../../assets/pages/${page}`), "utf8");
-            return [true, text]
-        } catch (e) {
-            return [false, e]
-        }
-    }
-}
+// namespace HANDLERS {
+//
+//     /**
+//      *
+//      * @param e
+//      * @param page
+//      */
+//     export async function returnPage(e: IpcMainInvokeEvent, page: string) {
+//         try {
+//             const text = fs.readFileSync(path.join(__dirname, `../../assets/pages/${page}`), "utf8");
+//             return [true, text]
+//         } catch (e) {
+//             return [false, e]
+//         }
+//     }
+// }
 /**
  *
  */
@@ -47,36 +46,11 @@ namespace GLOBAL {
  */
 namespace FABRICS {
 
+
     /**
      *
      */
-    export async function createWindow() {
-
-        ipcMain.on("system:close", () => {
-            const win_ = BrowserWindow.getFocusedWindow();
-            if (win_) {
-                win_.close();
-            }
-        });
-        ipcMain.on("system:resize", () => {
-            const win_ = BrowserWindow.getFocusedWindow();
-            if (win_) {
-                if (__window_maximized__) {
-                    win_.unmaximize();
-                    __window_maximized__ = false;
-                } else {
-                    win_.maximize();
-                    __window_maximized__ = true;
-                }
-            }
-        });
-        ipcMain.on("system:wrap", () => {
-            const win_ = BrowserWindow.getFocusedWindow();
-            if (win_) {
-                win_.minimize();
-            }
-        })
-
+    export function createWindow() {
         const Screen = screen.getPrimaryDisplay();
         const {width, height} = Screen.workAreaSize;
         win = new BrowserWindow({
@@ -84,13 +58,18 @@ namespace FABRICS {
             height: height,
             frame: false,
             show: false,
+            title: "Sequoia",
+            minWidth: width / 2,
+            minHeight: height / 2,
+            icon: nativeImage.createFromPath(path.join(__dirname, "../../assets/images/sequoia_icon.png")),
             webPreferences: {
                 nodeIntegration: true,
                 preload: path.join(__dirname, 'preload.js'),
+                devTools: false
             }
         })
 
-        await win.loadFile(path.join(__dirname, "../..", "index.html"));
+        win.loadFile(path.join(__dirname, "../..", "index.html"));
 
     }
 
@@ -104,67 +83,99 @@ namespace FABRICS {
         startWindow = new BrowserWindow({
             width: width / 1.5,
             height: height / 1.5,
+            title: "Sequoia",
+            icon: nativeImage.createFromPath(path.join(__dirname, "../../assets/images/sequoia_icon.png")),
             frame: false,
+            show: false,
             webPreferences: {
                 nodeIntegration: true,
                 contextIsolation: true,
             }
         })
-        startWindow.loadFile(path.join(__dirname, "../../assets/pages/start_page.html")).then(() => {
+        startWindow.loadFile(path.join(__dirname, "../../assets/pages/start_page.html"));
+        startWindow.on('ready-to-show', () => {
             startWindow.show();
-
         });
-        startWindow.show();
-
     }
 }
+ipcMain.on("system:close", () => {
+    const win_ = BrowserWindow.getFocusedWindow();
+    if (win_) {
+        win_.close();
+    }
+});
+ipcMain.on("system:resize", () => {
+    const win_ = BrowserWindow.getFocusedWindow();
+    if (win_) {
+        if (__window_maximized__) {
+            win_.unmaximize();
+            __window_maximized__ = false;
+        } else {
+            win_.maximize();
+            __window_maximized__ = true;
+        }
+    }
+});
+ipcMain.on("system:wrap", () => {
+    const win_ = BrowserWindow.getFocusedWindow();
+    if (win_) {
+        win_.minimize();
+    }
+})
+ipcMain.handle("system:all_spaces", () => {
+    return utils.UTILS.getAllSpaces()
+});
+ipcMain.handle("system:settings", () => {
+    return utils.UTILS.getSettings()
+});
+ipcMain.handle("system:space", (e: IpcMainInvokeEvent, name: string) => {
+    const spaces = getAllSpaces();
+    return spaces.filter((elem) => {
+        return elem.name === name
+    })[0]
+});
+ipcMain.handle("system:space_path", async () => {
+    return await spaces.getDirectoryOfSpace();
+});
+ipcMain.handle("system:space_make", (e: IpcMainInvokeEvent, name: string, path: string) => {
+    utils.UTILS.createSpace(name, path)
+    return utils.UTILS.getAllSpaces()
+});
+ipcMain.on("system:settings_update", (e: IpcMainInvokeEvent, settings: utils.UTILS.ISettings) => {
+    utils.UTILS.saveSettings(settings);
+});
+ipcMain.handle("system:music_meta", async (e: IpcMainInvokeEvent, path_: string) => {
+    return parseFiles(path_);
+});
+
+
+
 
 /**
  *
  */
-app.whenReady().then(async () => {
-    ipcMain.handle("display:page", HANDLERS.returnPage);
-    ipcMain.handle("system:all_spaces", () => {
-        return utils.UTILS.getAllSpaces()
-    });
-    ipcMain.handle("system:settings", () => {
-        return utils.UTILS.getSettings()
-    });
-    ipcMain.handle("system:space", (e: IpcMainInvokeEvent, name: string) => {
-        const spaces = getAllSpaces();
-        return spaces.filter((elem) => {
-            return elem.name === name
-        })[0]
-    });
-    ipcMain.handle("system:space_path", async () => {
-        return await spaces.getDirectoryOfSpace();
-    });
-    ipcMain.handle("system:space_make", (e: IpcMainInvokeEvent, name: string, path: string) => {
-        utils.UTILS.createSpace(name, path)
-        return utils.UTILS.getAllSpaces()
-    });
-
-    ipcMain.on("system:settings_update", (e: IpcMainInvokeEvent, settings: utils.UTILS.ISettings) => {
-        utils.UTILS.saveSettings(settings);
-    });
-
-
-    ipcMain.handle("system:music_meta", async (e: IpcMainInvokeEvent, path_: string) => {
-        return parseFiles(path_);
-    });
+app.whenReady().then(() => {
+    // ipcMain.handle("display:page", HANDLERS.returnPage);
 
 
     FABRICS.createStartWindow();
-    await FABRICS.createWindow();
+    FABRICS.createWindow();
 
-    await GLOBAL.delay(2300).then();
 
-    startWindow.on('closed', async () => {
-        win.show();
+    startWindow.once('ready-to-show', () => {
+        startWindow.show();
+
+        setTimeout(() => {
+            startWindow.close();
+        }, 2300);
     });
-    startWindow.close();
-});
 
+
+    startWindow.on("closed",()=>{
+           win.show();
+
+    });
+});
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {

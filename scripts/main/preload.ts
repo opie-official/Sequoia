@@ -29,9 +29,9 @@ contextBridge.exposeInMainWorld("__API__", {
     wrapWindow: () => {
         ipcRenderer.send("system:wrap")
     },
-    getPage: async (page: string): Promise<[boolean, string]> => {
-        return await ipcRenderer.invoke("display:page", page);
-    },
+    // getPage: async (page: string): Promise<[boolean, string]> => {
+    //     return await ipcRenderer.invoke("display:page", page);
+    // },
     getAllSpaces: async (): Promise<ISpace[]> => {
         return await ipcRenderer.invoke("system:all_spaces");
     },
