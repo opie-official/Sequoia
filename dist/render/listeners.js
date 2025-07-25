@@ -38,7 +38,6 @@ async function setupFooter() {
             manager.paused = true;
             img.src = "assets/images/pause.svg";
         }
-        console.log(manager.paused);
     });
     rewind_prev.addEventListener("click", () => {
         audio.currentTime -= 10;
@@ -157,6 +156,7 @@ async function setupFooter() {
     });
     document.addEventListener("keydown", (event) => {
         if (event.code === "Space") {
+            event.preventDefault();
             pause_button.click();
         }
     });

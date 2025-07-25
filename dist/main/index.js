@@ -34,6 +34,7 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
+const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const utils = __importStar(require("./utils"));
 const spaces = __importStar(require("./spaces"));
@@ -43,35 +44,6 @@ const metadata_1 = require("./metadata");
 let __window_maximized__ = false;
 let win;
 let startWindow;
-/**
- *
- */
-// namespace HANDLERS {
-//
-//     /**
-//      *
-//      * @param e
-//      * @param page
-//      */
-//     export async function returnPage(e: IpcMainInvokeEvent, page: string) {
-//         try {
-//             const text = fs.readFileSync(path.join(__dirname, `../../assets/pages/${page}`), "utf8");
-//             return [true, text]
-//         } catch (e) {
-//             return [false, e]
-//         }
-//     }
-// }
-/**
- *
- */
-var GLOBAL;
-(function (GLOBAL) {
-    function delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    GLOBAL.delay = delay;
-})(GLOBAL || (GLOBAL = {}));
 /**
  *
  */
@@ -95,10 +67,10 @@ var FABRICS;
             webPreferences: {
                 nodeIntegration: true,
                 preload: path.join(__dirname, 'preload.js'),
-                devTools: false
+                devTools: true
             }
         });
-        win.loadFile(path.join(__dirname, "../..", "index.html"));
+        win.loadFile(path.join(__dirname, "../..", "index.html")).then();
     }
     FABRICS.createWindow = createWindow;
     /**
@@ -119,7 +91,7 @@ var FABRICS;
                 contextIsolation: true,
             }
         });
-        startWindow.loadFile(path.join(__dirname, "../../assets/pages/start_page.html"));
+        startWindow.loadFile(path.join(__dirname, "../../start_page.html")).then();
         startWindow.on('ready-to-show', () => {
             startWindow.show();
         });
@@ -155,7 +127,8 @@ electron_1.ipcMain.handle("system:all_spaces", () => {
     return utils.UTILS.getAllSpaces();
 });
 electron_1.ipcMain.handle("system:settings", () => {
-    return utils.UTILS.getSettings();
+    const res = utils.UTILS.getSettings();
+    return res;
 });
 electron_1.ipcMain.handle("system:space", (e, name) => {
     const spaces = getAllSpaces();
@@ -176,11 +149,42 @@ electron_1.ipcMain.on("system:settings_update", (e, settings) => {
 electron_1.ipcMain.handle("system:music_meta", async (e, path_) => {
     return (0, metadata_1.parseFiles)(path_);
 });
+electron_1.ipcMain.handle("system:playlist_image", async () => {
+    const res = await electron_1.dialog.showOpenDialog({
+        properties: ["openFile"],
+        filters: [{
+                name: "Изображения",
+                extensions: ["png", "jpeg", "svg", "gif", "jpg"],
+            }]
+    });
+    if (res.canceled) {
+        return [false, ""];
+    }
+    const file = res.filePaths[0];
+    const ext = path.extname(file).substring(1).toLowerCase();
+    let data = "";
+    let base;
+    if (ext === "svg") {
+        data = fs.readFileSync(file, "utf8");
+        base = Buffer.from(data).toString("base64");
+    }
+    else {
+        base = fs.readFileSync(file).toString("base64");
+    }
+    const result = `data:image/${ext};base64,${base}`;
+    return [true, result];
+});
+electron_1.ipcMain.handle("system:meta", (e, path) => {
+    return (0, metadata_1.readMetaMP3)(path);
+});
+electron_1.ipcMain.on("system:save_meta", (e, meta) => {
+    (0, metadata_1.saveMetaMP3)(meta);
+});
 /**
  *
  */
 electron_1.app.whenReady().then(() => {
-    // ipcMain.handle("display:page", HANDLERS.returnPage);
+    utils_1.CHECK.startCheck();
     FABRICS.createStartWindow();
     FABRICS.createWindow();
     startWindow.once('ready-to-show', () => {

@@ -1,6 +1,3 @@
-
-
-
 /**
  * @interface IPlaylist
  * Interface of playlist
@@ -57,6 +54,27 @@ interface Meta {
     pictures: string,
 }
 
+
+/**
+ *
+ */
+interface ExtendedMeta {
+    name: string,
+    filename: string,
+    description: string,
+    icon: string,
+    album: string,
+    artist: string,
+    executor: string,
+    composer: string,
+    genre: string,
+    year: string,
+    number: string,
+    disk_number: string,
+    filepath: string,
+    path_to: string
+}
+
 /**
  * @interface API
  * Interface of IPC-API
@@ -65,14 +83,17 @@ interface API {
     closeWindow: () => void
     resizeWindow: () => void
     wrapWindow: () => void,
-    getPage: (page: string) => Promise<[boolean, string]>,
     getAllSpaces: () => Promise<ISpace[]>,
     getSettings: () => Promise<ISettings>,
     getSpace: (name: string) => Promise<ISpace>,
     getSpacePath: () => Promise<[boolean, string]>,
     makeSpace: (name: string, path: string) => Promise<ISpace[]>,
     updateSettings: (settings: ISettings) => void,
-    getMusicMeta: (path: string) => Promise<any[]>
+    getMusicMeta: (path: string) => Promise<any[]>,
+    getPlaylistImage: () => Promise<[boolean, string]>,
+    getExtendedMeta: (path: string) => Promise<ExtendedMeta[]>,
+    saveMeta: (meta: ExtendedMeta) => void
+
 }
 
 /**
@@ -87,13 +108,19 @@ class MainManager {
     public playlist_audio: Meta[] = []; // audio from playlist from current space;
 
     public new_playlist_audio: Meta[] = []
+    public new_playlist_image: string = "";
 
     public current_playlist_index = 0;
     public current_audio_index = 0;
     public paused = false;
     public looped = false;
     public randomed = false;
+    public is_playlist_edit = false;
 
+    public current_audio_for_edit = -1;
+    public current_audio_for_edit_name = "";
+    public current_audio_for_edit_path = "";
+    public current_audio_for_edit_path_to = "";
 
     constructor(api: API, settings: ISettings, root: HTMLDivElement) {
         this.api = api;
@@ -252,7 +279,7 @@ class UpdateManager {
     static updateMain_Songs() {
         const songs_div = document.getElementById("main-songs") as HTMLDivElement;
         this.removeChildren("main-songs");
-        if (manager.settings.current_space===-1){
+        if (manager.settings.current_space === -1) {
             return;
         }
         manager.setCurrentPlaylist();
@@ -289,7 +316,7 @@ class UpdateManager {
     static updateMain_Playlists() {
         const playlists_div = document.getElementById("main-aside-playlists") as HTMLDivElement;
         this.removeChildren(playlists_div.id);
-        if (manager.settings.current_space===-1){
+        if (manager.settings.current_space === -1) {
             return;
         }
         const playlists = manager.getPlaylists();
@@ -297,7 +324,7 @@ class UpdateManager {
             const index = i;
             const result = playlistOnMainFabric(playlists[i]);
 
-            if (index===manager.current_playlist_index){
+            if (index === manager.current_playlist_index) {
                 result.classList.add("toggled-playlist");
             }
 
@@ -323,19 +350,14 @@ class UpdateManager {
     static updateMain_Messages() {
         const p = document.getElementById("main-spaces-name") as HTMLParagraphElement;
         const list = document.getElementById("main-songs") as HTMLDivElement;
-        if (manager.settings.current_space!==-1) {
+        if (manager.settings.current_space !== -1) {
             const space = manager.getCurrentSpace();
             p.textContent = space.name;
 
-        }else{
+        } else {
             p.textContent = "";
             list.append(document.createTextNode("В текущем пространстве нет ни одной песни"));
         }
-
-
-
-
-
 
 
     }
@@ -364,7 +386,12 @@ class UpdateManager {
      *
      */
     static updatePlaylists() {
+        const img2 = document.getElementById("playlists-img2") as HTMLImageElement;
+        img2.src = "";
+
+
         const playlist_div = document.getElementById("playlists-right") as HTMLDivElement;
+        manager.new_playlist_audio = [];
         this.removeChildren(playlist_div.id);
         const audio = manager.all_audio;
         if (!audio) {
@@ -399,14 +426,13 @@ function secondsToTime(seconds: number) {
     seconds = Math.round(seconds);
     const minutes = Math.floor(seconds / 60);
     const new_seconds = String(Math.abs(minutes * 60 - seconds));
-    return `${minutes}:${new_seconds}`
+    return `${minutes > 10 ? "0" + String(minutes) : minutes}:${new_seconds.length === 1 ? "0" + new_seconds : new_seconds}`
 }
 
 
 /**
  * Select a new space
  * @param index
- * @param body
  */
 async function select(index: number) {
     manager.settings.current_space = index;
@@ -428,7 +454,7 @@ async function setupAudio() {
     if (manager.settings.current_space === -1 && manager.settings.spaces.length > 0) {
         manager.settings.current_space = 0;
     }
-    if (manager.settings.current_space===-1){
+    if (manager.settings.current_space === -1) {
         return;
     }
     const spaces = manager.settings.spaces;
@@ -448,7 +474,6 @@ async function setupAudio() {
 
 
     const audio = document.getElementById("main-audio") as HTMLAudioElement;
-    console.log(`audio: ${current_playlist}`)
     const volume = document.getElementById("volume") as HTMLInputElement;
     audio.volume = parseFloat(volume.value) / 100;
 
@@ -462,6 +487,12 @@ function showCurrentAudio() {
     try {
         const name = document.getElementById("label-name") as HTMLParagraphElement;
         const author = document.getElementById("label-author") as HTMLParagraphElement;
+        const img = document.getElementById("footer-current-icon") as HTMLImageElement;
+        if (manager.playlist_audio[manager.current_audio_index].pictures) {
+            img.src = manager.playlist_audio[manager.current_audio_index].pictures;
+        } else {
+            img.src = "assets/images/playlist_logo.svg";
+        }
         name.textContent = manager.playlist_audio[manager.current_audio_index].name;
         author.textContent = manager.playlist_audio[manager.current_audio_index].artist;
     } catch (e) {
@@ -469,3 +500,206 @@ function showCurrentAudio() {
     }
 
 }
+
+
+/**
+ * @file fabrics
+ */
+
+
+/**
+ * Create a space widget
+ * @param index {number} an index of space
+ * @param space {ISpace} an object with properties of space
+ * @returns {HTMLDivElement} a new widget
+ */
+function spaceFabric(index: number, space: ISpace): HTMLDivElement {
+    const {name, path} = space;
+    const body = document.createElement('div');
+    const _number = document.createElement("p");
+    const _name = document.createElement("p");
+    const _path = document.createElement("p");
+
+    body.classList.add("space-element");
+    _number.classList.add("space-element-number");
+    _number.appendChild(document.createTextNode(index.toString()));
+    _name.classList.add("space-element-name");
+    _name.appendChild(document.createTextNode(name));
+    _path.classList.add("space-element-path");
+    _path.appendChild(document.createTextNode(path));
+
+
+    body.append(_number, _name, _path);
+    return body;
+
+
+}
+
+/**
+ * Create an audio-widget that user can choose for append to a new playlist
+ * @param index {number} an index of audio
+ * @param meta {Meta} an object with properties of audio
+ * @returns {HTMLDivElement} a new widget
+ */
+function playlistsAudioFabric(index: number, meta: Meta): HTMLDivElement {
+    const body = document.createElement("div");
+    const checkbox = document.createElement("input");
+    const index_ = document.createElement("p");
+    const div = document.createElement("div");
+    const name = document.createElement("p");
+    const artist = document.createElement("p");
+    const album = document.createElement("p");
+    const duration = document.createElement("p");
+    const group = document.createElement("div");
+
+    body.classList.add("playlist-body");
+
+    checkbox.type = "checkbox";
+    checkbox.classList.add("playlist-body-checkbox");
+
+    index_.classList.add("playlist-body-index");
+    index_.textContent = cutText(index.toString(), 15);
+
+    div.classList.add("playlist-body-pic-out");
+
+    name.classList.add("playlist-body-name");
+    name.textContent = cutText(`${meta.name}`, 15);
+
+    artist.classList.add("playlist-body-artist");
+    artist.textContent = cutText(`${meta.artist}`, 15)
+
+    album.classList.add("playlist-body-album")
+    album.textContent = cutText(`${meta.album}`, 15);
+
+    duration.classList.add("playlist-body-duration");
+    duration.textContent = cutText(secondsToTime(meta.duration), 15);
+
+
+    group.classList.add("playlist-body-group");
+    group.append(checkbox, index_, div, name, artist, album)
+
+    body.append(group, duration);
+
+    return body;
+
+}
+
+
+/**
+ * Cut text
+ * @param text {string} a text that wil be cut
+ * @param max {max} an index of last char in result
+ * @returns {string} a cut up text
+ */
+function cutText(text: string, max: number): string {
+    return text.length > max ? text.substring(0, max) + "..." : text;
+}
+
+
+/**
+ * Create a playlist-widget on mainpage
+ * @param meta {IPlaylist} an object with properties of playlist
+ * @param is_main deprecated argument
+ * @returns {HTMLDivElement} a new widget
+ */
+function playlistOnMainFabric(meta: IPlaylist, is_main = false): HTMLDivElement {
+
+    const body = document.createElement("div");
+    const div = document.createElement("div");
+    const name = document.createElement("p");
+    const amount = document.createElement("p");
+    if (meta.icon) {
+        const pic = document.createElement("img");
+        pic.classList.add("main-playlist-body-pic");
+        pic.src = meta.icon;
+        div.append(pic);
+    }
+
+    body.classList.add("main-playlist-body");
+
+    div.classList.add("main-playlist-body-pic-out");
+
+    name.classList.add("main-playlist-name");
+    name.textContent = meta.name;
+
+    amount.classList.add("main-playlist-amount");
+
+    if (is_main || meta.name === "__global__") {
+        name.textContent = "Все песни"
+        amount.textContent = manager.all_audio.length.toString() + " аудио";
+    } else {
+
+        amount.textContent = meta.songs.length + " аудио";
+    }
+
+    body.append(div, name, amount);
+    return body;
+}
+
+/**
+ * Create an audio widget
+ * @param index {number} an index of audio
+ * @param meta {Meta} an object with properties of audio
+ * @returns {HTMLDivElement} a new widget
+ *
+ */
+function audioFabric(index: number, meta: Meta): HTMLDivElement {
+
+
+    const body = document.createElement("div");
+    body.classList.add("main-song");
+    const num = document.createElement("p");
+    num.classList.add("main-song-number");
+    num.appendChild(document.createTextNode(`${index + 1}`));
+    const pic_outer = document.createElement("div");
+    pic_outer.classList.add("main-song-image-out");
+    const img = document.createElement("img");
+    img.classList.add("main-song-image");
+    if (meta.pictures) {
+        img.src = meta.pictures;
+    } else {
+        img.src = "assets/images/playlist_logo.svg";
+    }
+    pic_outer.appendChild(img);
+
+    const name = document.createElement("p");
+    name.classList.add("main-song-name");
+    name.textContent = cutText(meta.name, 20);
+    const artist = document.createElement("p");
+    artist.classList.add("main-song-artist");
+    artist.appendChild(document.createTextNode(meta.artist));
+    const album = document.createElement("p");
+    album.classList.add("main-song-album");
+    album.appendChild(document.createTextNode(meta.album));
+    const duration = document.createElement("p");
+    duration.classList.add("main-song-duration");
+    duration.textContent = secondsToTime(meta.duration ?? 0);
+
+    const group = document.createElement("div");
+    group.classList.add("main-song-group");
+    group.append(num, pic_outer, name, artist, album);
+    body.append(group, duration);
+
+    return body;
+}
+
+/**
+ * Create a temporary message about error
+ * @param name {string} a message of error
+ */
+function errorFabric(name: string) {
+    const body = document.createElement("div");
+    body.classList.add("error");
+    const p = document.createElement("p");
+    p.classList.add("error-p");
+    p.textContent = name;
+    body.append(p);
+    manager.root.append(body);
+
+
+    setTimeout(() => {
+        body.remove();
+    }, 3000);
+}
+
+

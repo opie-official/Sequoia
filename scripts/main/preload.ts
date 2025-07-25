@@ -18,6 +18,25 @@ interface ISettings {
     spaces: ISpace[],
     current_space: number
 }
+interface ExtendedMeta {
+    name: string,
+    filename: string,
+    description: string,
+    icon: string,
+    album: string,
+    artist: string,
+    executor: string,
+    composer: string,
+    genre: string,
+    year: string,
+    number: string,
+    disk_number: string,
+    filepath: string,
+    path_to:string
+
+}
+
+
 
 contextBridge.exposeInMainWorld("__API__", {
     closeWindow: () => {
@@ -52,5 +71,14 @@ contextBridge.exposeInMainWorld("__API__", {
     },
     getMusicMeta: async (path: string) => {
         return await ipcRenderer.invoke("system:music_meta", path);
+    },
+    getPlaylistImage: async ()=>{
+        return await ipcRenderer.invoke("system:playlist_image");
+    },
+    getExtendedMeta: async(path: string)=>{
+        return await ipcRenderer.invoke("system:meta", path);
+    },
+    saveMeta: (meta: ExtendedMeta)=>{
+        ipcRenderer.send("system:save_meta", meta)
     }
 })

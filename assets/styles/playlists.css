@@ -84,6 +84,19 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    border: 0 solid;
+    overflow: hidden;
+    position: relative;
+}
+#playlists-img1 {
+    position: absolute;
+    width: 60%;
+}
+
+#playlists-img2{
+    position: absolute;
+    width: 100%;
+    opacity: 0.7;
 }
 
 #playlists-input-label {
@@ -94,9 +107,7 @@
     color: #BABABA;
 }
 
-#playlists-logo > img {
-    width: 60%;
-}
+
 
 #playlist-name {
     width: 50%;
@@ -209,7 +220,7 @@
 
 .playlist-body-index {
     color: white;
-    font-size: 5px;
+    font-size: 15px;
     position: absolute;
     left: 5%;
 }

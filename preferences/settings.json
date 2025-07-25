@@ -1,1 +1,8 @@
-{"doctype":"opie/seq","version":"1.0.0","spaces":[{"name":"Главная","path":"C:\\Users\\Andryusha\\Desktop\\мои файлы\\aimp_media","playlists":[{"name":"__global__","icon":"","songs":[]}]}],"current_space":0}
+{
+  "doctype": "opie/seq",
+  "version": "1.0.0",
+  "spaces": [
+
+  ],
+  "current_space": -1
+}

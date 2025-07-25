@@ -3,6 +3,7 @@
     --main: #19191B;
     --aside: #232427;
     --footer: #2A2B2D;
+    --orange: rgb(232,123,50);
 }
 
 * {
@@ -18,6 +19,7 @@ html, body {
     position: absolute;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .disabled {
@@ -62,6 +64,7 @@ html, body {
     aspect-ratio: 1/1;
     position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     background: transparent;
@@ -139,4 +142,105 @@ html, body {
     80% {
         top: -30%;
     }
+}
+
+
+
+
+#equalizer-body{
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height:80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    background: var(--aside);
+    border-radius: 20px;
+}
+
+
+#equalizer-buttons{
+    position: absolute;
+    top: 2%;
+    left: 0.5%;
+    width: 7%;
+    height: 3%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10%;
+}
+
+
+#equalizer-undo{
+    background: var(--red);
+    border-radius: 100px;
+    border: 0 solid;
+    height: 100%;
+    aspect-ratio: 1/1;
+    &:hover{
+        background: #cc5656;
+    }
+}
+
+
+#equalizer-reset{
+    background: var(--orange);
+    border-radius: 100px;
+    border: 0 solid;
+    height: 100%;
+    aspect-ratio: 1/1;
+    &:hover{
+        background: #e38749;
+    }
+}
+
+#equalizer-list{
+    width: 100%;
+    height: 90%;
+    position: absolute;
+    top: 5%;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2%;
+}
+.equalizer-option-body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60px;
+    margin: 0 10px;
+    height: 100%;
+}
+
+.equalizer-option-name,
+.equalizer-option-value {
+    margin: 5px 0;
+    text-align: center;
+    color: white;
+    font-size: 15pt;
+}
+.equalizer-option{
+    writing-mode: vertical-lr !important;
+    -webkit-appearance: none;
+    width: 5% !important;
+    height: 90%!important;
+    direction: rtl;
+
+}
+.equalizer-option::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px;
+    height: 10px;
+    background: white !important;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-top: -5px;
 }

@@ -45,7 +45,8 @@
     align-items: center;
     gap: 2%;
 }
-#main-aside-playlists-buttons{
+
+#main-aside-playlists-buttons {
     width: 100%;
     height: 10%;
     display: flex;
@@ -53,6 +54,7 @@
     align-items: center;
     gap: 10%;
 }
+
 #main-create-new-playlist {
     width: 10%;
     aspect-ratio: 1/1;
@@ -63,6 +65,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    &:hover {
+        filter: brightness(1.5);
+    }
+
 }
 
 #main-create-new-playlist img {
@@ -70,7 +77,7 @@
 }
 
 #main-create-delete-playlist {
-    width: 10%;
+    width: 7%;
     aspect-ratio: 1/1;
     background: transparent;
     border: 0 solid;
@@ -78,10 +85,36 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    &:hover {
+        filter: brightness(1.5);
+    }
 }
+
 #main-create-delete-playlist img {
     width: 100%;
 }
+
+#main-create-edit-playlist {
+    width: 7%;
+    aspect-ratio: 1/1;
+    background: transparent;
+    border: 0 solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+
+    &:hover {
+        filter: brightness(1.5);
+    }
+}
+
+#main-create-edit-playlist img {
+    width: 100%;
+}
+
 
 #main-aside-playlists {
     width: 100%;
@@ -140,6 +173,14 @@
 
     &:hover {
         background: #d55757;
+    }
+
+}
+#main-spaces-logo>img{
+    width: 60%;
+    opacity: 0;
+    &:hover{
+        opacity: 1;
     }
 }
 
@@ -260,8 +301,9 @@
 
 .main-song {
     position: relative;
+    left: 5%;
     background: var(--main);
-    width: 100%;
+    width: 95%;
     height: 10%;
     display: flex;
     justify-content: start;
@@ -278,7 +320,7 @@
     height: 100%;
     display: flex;
     justify-content: start;
-    align-items: center;
+    align-items: flex-start;
     gap: 10%;
 }
 
@@ -306,21 +348,25 @@
     background: var(--red);
     border-radius: 10px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     position: absolute;
-    left: 10%;
+    left: 5%;
     top: 17.5%;
+    overflow: hidden;
 }
 
 .main-song-image-out > img {
+    position: relative;
     width: 100%;
+
 }
 
 .main-song-number {
     width: 5%;
     height: 100%;
-    left: 8%;
+    left: 3%;
     text-align: end;
 }
 
@@ -328,19 +374,19 @@
 .main-song-name {
     width: 20%;
     height: 100%;
-    left: 15%;
+    left: 10%;
 }
 
 .main-song-artist {
     width: 10%;
     height: 100%;
-    left: 33%;
+    left: 31%;
 }
 
 .main-song-album {
     width: 10%;
     height: 100%;
-    left: 47%;
+    left: 46%;
 }
 
 
@@ -390,32 +436,59 @@
 
 #footer-audio-logo {
     position: relative;
-    height: 80%;
     aspect-ratio: 1/1;
-    background: var(--red);
+    height: 80%;
     border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 0 solid;
+    background: #D9D9D9;
+    flex-shrink: 0;
+}
+
+#footer-audio-logo > img {
+    width: 100%;
 }
 
 #footer-audio-label {
     height: 100%;
+    width: 50%;
     overflow: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 5%;
+    /*flex-grow: 1;*/
+
+
+    &::-webkit-scrollbar{
+        width: 0;
+        height: 0;
+    }
 }
+
+
 
 #label-name {
     color: white;
     font-size: 10pt;
     overflow: hidden;
+    word-wrap: break-word;
+    text-align: start;
+    width: 100%;
 }
 
 #label-author {
+    text-align: start;
     color: #BABABA;
-    font-size: 5pt;
+    font-size: 7pt;
     overflow: hidden;
+    word-wrap: break-word;
+    width: 100%;
 }
 
 
@@ -637,12 +710,17 @@ input[type=range]::-webkit-slider-thumb {
 .main-playlist-body-pic-out {
     height: 90%;
     aspect-ratio: 1/1;
-    background: var(--red);
+    background: var(--orange);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     border-radius: 10px;
+    overflow: hidden;
+
+}
+.main-playlist-body-pic{
+    width: 100%;
 }
 
 .main-playlist-name {
@@ -655,7 +733,3 @@ input[type=range]::-webkit-slider-thumb {
     color: #BABABA;
 }
 
-#main-aside-playlists {
-}
-
-#main-create-new-playlist

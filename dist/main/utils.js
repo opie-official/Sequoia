@@ -72,11 +72,19 @@ var UTILS;
 var CHECK;
 (function (CHECK) {
     function startCheck() {
+        const settings = checkSettings();
+        if (!settings) {
+            const sets = {
+                doctype: "opie/seq",
+                version: "",
+                spaces: [],
+                current_space: -1
+            };
+            fs.writeFileSync(path.join(__dirname, "../../preferences/settings.json"), JSON.stringify(sets));
+        }
     }
     CHECK.startCheck = startCheck;
     function checkSettings() {
-        if (fs.existsSync(path.join(__dirname, "../../preferences/settings.json"))) {
-        }
-        return false;
+        return fs.existsSync(path.join(__dirname, "../../preferences/settings.json"));
     }
 })(CHECK || (exports.CHECK = CHECK = {}));

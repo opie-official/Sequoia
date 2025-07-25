@@ -34,5 +34,14 @@ electron_1.contextBridge.exposeInMainWorld("__API__", {
     },
     getMusicMeta: async (path) => {
         return await electron_1.ipcRenderer.invoke("system:music_meta", path);
+    },
+    getPlaylistImage: async () => {
+        return await electron_1.ipcRenderer.invoke("system:playlist_image");
+    },
+    getExtendedMeta: async (path) => {
+        return await electron_1.ipcRenderer.invoke("system:meta", path);
+    },
+    saveMeta: (meta) => {
+        electron_1.ipcRenderer.send("system:save_meta", meta);
     }
 });

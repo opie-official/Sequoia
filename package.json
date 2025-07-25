@@ -8,7 +8,8 @@
     "build:render": "tsc -p ./scripts/render/tsconfig.json",
     "build:main": "tsc -p ./scripts/main/tsconfig.json",
     "build": "npm run build:main && npm run build:render",
-    "pack": "electron-builder --x64 --ia32 --arm64 --win --"
+    "pack-amd": "electron-builder --x64  --win",
+    "pack-arm": "electron-builder --arm64 --win"
   },
   "build": {
     "appId": "github.opie.sequoia",
@@ -30,7 +31,7 @@
       "buildResources": "assets"
     },
     "win": {
-      "target": "portable",
+      "target": "nsis",
       "icon": "assets/images/sequoia_icon.png"
     },
     "nsis": {
@@ -50,6 +51,7 @@
   },
   "devDependencies": {
     "electron": "^37.2.1",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "ffmetadata": "^1.7.0"
   }
 }

@@ -26,6 +26,7 @@ export namespace UTILS {
 
     export function getSettings(): ISettings {
         return JSON.parse(fs.readFileSync(path.join(__dirname, "../../preferences/settings.json"), "utf-8"));
+
     }
 
     export function createSpace(name: string, path: string) {
@@ -56,22 +57,31 @@ export namespace UTILS {
         const spaces = settings.spaces;
         return spaces.length >= 1;
 
+
     }
+
 }
-
-
 export namespace CHECK {
 
 
     export function startCheck() {
 
+        const settings = checkSettings();
+
+        if (!settings){
+            const sets: UTILS.ISettings={
+                doctype: "opie/seq",
+                version:"",
+                spaces: [],
+                current_space: -1
+            }
+            fs.writeFileSync(path.join(__dirname, "../../preferences/settings.json"),JSON.stringify(sets));
+        }
     }
 
 
     function checkSettings(): boolean {
-        if (fs.existsSync(path.join(__dirname, "../../preferences/settings.json"))) {
+        return fs.existsSync(path.join(__dirname, "../../preferences/settings.json"));
 
-        }
-        return false;
     }
 }

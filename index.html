@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="assets/styles/main_page.css">
     <link rel="stylesheet" href="assets/styles/spaces.css">
     <link rel="stylesheet" href="assets/styles/playlists.css">
+    <link rel="stylesheet" href="assets/styles/selected.css">
+    <link rel="stylesheet" href="assets/styles/tags.css">
 </head>
 <body>
 <div id="title-bar">
@@ -14,16 +16,58 @@
     <button class="title-bar-button" id="title-resize"><img alt="" src="assets/images/title-bar-resize.svg"></button>
     <button class="title-bar-button" id="title-close"><img alt="" src="assets/images/title-bar-close.svg"></button>
 </div>
+
+
+<div id="equalizer-body" class="disabled">
+    <div id="equalizer-buttons">
+        <button id="equalizer-undo"></button>
+        <button id="equalizer-reset"></button>
+    </div>
+    <div id="equalizer-list">
+        <div class="equalizer-option-body">
+            <p class="equalizer-option-name"></p>
+            <input class="equalizer-option" type="range" value="0">
+            <p class="equalizer-option-value">0</p>
+        </div>
+        <div class="equalizer-option-body">
+            <p class="equalizer-option-name"></p>
+            <input class="equalizer-option" type="range" value="0">
+            <p class="equalizer-option-value">0</p>
+        </div>
+        <div class="equalizer-option-body">
+            <p class="equalizer-option-name"></p>
+            <input class="equalizer-option" type="range" value="0">
+            <p class="equalizer-option-value">0</p>
+        </div>
+        <div class="equalizer-option-body">
+            <p class="equalizer-option-name"></p>
+            <input class="equalizer-option" type="range" value="0">
+            <p class="equalizer-option-value">0</p>
+        </div>
+        <div class="equalizer-option-body">
+            <p class="equalizer-option-name"></p>
+            <input class="equalizer-option" type="range" value="0">
+            <p class="equalizer-option-value">0</p>
+        </div>
+        <div class="equalizer-option-body">
+            <p class="equalizer-option-name"></p>
+            <input class="equalizer-option" type="range" value="0">
+            <p class="equalizer-option-value">0</p>
+        </div>
+
+    </div>
+</div>
+
 <div id="root">
     <div id="main-page">
         <aside id="main-aside">
             <p id="aside-logo">Sequoia</p>
-
             <div id="main-aside-playlists-group">
                 <div id="main-aside-playlists-buttons">
                     <button id="main-create-delete-playlist"><img src="assets/images/title-bar-swap.svg" alt="">
-                    <button id="main-create-new-playlist"><img src="assets/images/add_playlist.svg" alt=""></button>
                     </button>
+                    <button id="main-create-edit-playlist"><img src="assets/images/edit_tags.svg" alt=""></button>
+                    <button id="main-create-new-playlist"><img src="assets/images/add_playlist.svg" alt=""></button>
                 </div>
                 <div id="main-aside-playlists"></div>
             </div>
@@ -31,7 +75,7 @@
         </aside>
         <main id="main">
             <div id="main-spaces">
-                <button id="main-spaces-logo"></button>
+                <button id="main-spaces-logo"><img src="assets/images/edit_tags.svg" alt></button>
                 <p id="main-spaces-name"></p>
             </div>
             <div id="main-content">
@@ -65,8 +109,11 @@
         </div>
         <div id="space-content">
             <div id="space-space">
-                <div id="space-logo"></div>
-                <p id="space-name"></p>
+                <div id="space-main">
+                    <div id="space-logo"></div>
+                    <p id="space-name"></p>
+                </div>
+                <p id="space-description">Пространства - места, где хранятся ваши треки</p>
             </div>
 
             <div id="space-list-content">
@@ -81,12 +128,15 @@
     </div>
     <div id="playlists" class="disabled">
         <div id="playlists-undo-redo">
-        <button id="playlists-undo"></button>
-            <button id="playlists-redo"></button></div>
+            <button id="playlists-undo"></button>
+            <button id="playlists-redo"></button>
+        </div>
         <div id="playlists-content">
             <div id="playlists-left">
                 <div id="playlists-top">
-                    <div id="playlists-logo"><img src="assets/images/playlist_logo.svg" alt=""></div>
+                    <button id="playlists-logo">
+                        <img id="playlists-img1" src="assets/images/playlist_logo.svg" alt=""><img id="playlists-img2"
+                                                                                                   alt src></button>
                     <div id="playlist-name">
                         <label for="playlists-name-input" id="playlists-input-label">Название плейлиста</label>
                         <input id="playlists-name-input">
@@ -102,12 +152,61 @@
             </div>
         </div>
     </div>
+    <div id="selected-audio" class="disabled">
+        <div id="selected-audio-buttons">
+            <button class="selected-audio-button" id="selected-undo"></button>
+            <button class="selected-audio-button" id="selected-edit-tags"><img src="assets/images/edit_tags.svg" alt>
+            </button>
+        </div>
+        <div id="selected-main">
+            <div id="selected-logo"><img id="selected-logo-logo" src="" alt></div>
+            <p id="selected-name"></p>
+            <p id="selected-artist"></p>
+        </div>
+        <button id="equalizer"><img src="assets/images/equalizer.svg" alt></button>
+    </div>
+    <div id="tag-page" class="disabled">
+        <div id="tag-buttons">
+            <button class="tag-button" id="tag-undo"></button>
+            <button class="tag-button" id="tag-redo"></button>
+        </div>
+        <div id="tag-content">
+            <div id="tag-tags">
+                <div id="tag-1">
+                    <input class="tag-input" placeholder="Имя файля" id="tag-filename">
+                    <input class="tag-input" placeholder="Название" id="tag-name">
+                    <input class="tag-input" placeholder="Альбом" id="tag-album">
+                </div>
+                <div id="tag-2">
+                    <input class="tag-input-2" placeholder="Заметки" id="tag-desc">
+                    <input class="tag-input-2" placeholder="Исполнитель" id="tag-executor">
+                    <input class="tag-input-2" placeholder="Композитор" id="tag-composer">
+                    <input class="tag-input-2" placeholder="Артист" id="tag-artist">
+                    <input class="tag-input-2" placeholder="Жанр" id="tag-genre">
+                </div>
+                <div id="tag-icon">
+                    <div id="tag-icon-buttons">
+                        <button class="tag-icon-button" id="tag-remove-icon"><img src="assets/images/title-bar-close.svg" alt></button>
+                        <button class="tag-icon-button" id="tag-new-icon"><img src="assets/images/add_playlist.svg" alt></button>
+                    </div>
+                    <img id="tag-icon-1" alt="" src="">
+                </div>
+                <div id="tag-3">
+                    <input class="tag-input-3" placeholder="Год" id="tag-year">
+                    <input class="tag-input-3" placeholder="Номер" id="tag-number">
+                    <input class="tag-input-3" placeholder="Номер диска" id="tag-disc-number">
+                </div>
+
+            </div>
+            <div id="tag-audio"></div>
+        </div>
+    </div>
 </div>
 <footer id="main-footer">
     <div id="footer-left">
-        <div id="footer-audio-logo">
-
-        </div>
+        <button id="footer-audio-logo">
+            <img id="footer-current-icon" src="assets/images/playlist_logo.svg" alt="">
+        </button>
         <div id="footer-audio-label">
             <p id="label-name"></p>
             <p id="label-author"></p>
@@ -124,8 +223,8 @@
             <button class="main-button" id="main-next"><img src="assets/images/next.svg" alt=""></button>
         </div>
         <div id="footer-duration">
-            <p id="footer-duration-value"></p>
-            <input id="duration" type="range">
+            <p id="footer-duration-value">0:00</p>
+            <input id="duration" value="0" type="range">
         </div>
     </div>
     <div id="footer-right">
@@ -143,7 +242,6 @@
     </div>
 </footer>
 <audio id="main-audio"></audio>
-<script src="dist/render/fabrics.js"></script>
 <script src="dist/render/utils.js"></script>
 <script src="dist/render/listeners.js"></script>
 <script src="dist/render/page_handlers.js"></script>

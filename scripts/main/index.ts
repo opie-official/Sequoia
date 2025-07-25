@@ -1,46 +1,18 @@
-import {BrowserWindow, IpcMainInvokeEvent, ipcMain, screen, app, nativeImage} from "electron"
+import {BrowserWindow, IpcMainInvokeEvent, ipcMain, screen, app, nativeImage, dialog, IpcMainEvent} from "electron"
 import * as fs from "fs"
 import * as path from "path"
 import * as utils from "./utils"
 import * as spaces from "./spaces"
-import {UTILS} from "./utils";
+import {CHECK, UTILS} from "./utils";
 import getAllSpaces = UTILS.getAllSpaces;
-import {parseFiles} from "./metadata";
+import {parseFiles, readMetaMP3, ExtendedMeta, saveMetaMP3} from "./metadata";
 
 let __window_maximized__ = false;
 
 let win: BrowserWindow;
 let startWindow: BrowserWindow;
-/**
- *
- */
-// namespace HANDLERS {
-//
-//     /**
-//      *
-//      * @param e
-//      * @param page
-//      */
-//     export async function returnPage(e: IpcMainInvokeEvent, page: string) {
-//         try {
-//             const text = fs.readFileSync(path.join(__dirname, `../../assets/pages/${page}`), "utf8");
-//             return [true, text]
-//         } catch (e) {
-//             return [false, e]
-//         }
-//     }
-// }
-/**
- *
- */
-namespace GLOBAL {
-
-    export function delay(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
 
 
-}
 /**
  *
  */
@@ -65,11 +37,11 @@ namespace FABRICS {
             webPreferences: {
                 nodeIntegration: true,
                 preload: path.join(__dirname, 'preload.js'),
-                devTools: false
+                devTools: true
             }
         })
 
-        win.loadFile(path.join(__dirname, "../..", "index.html"));
+        win.loadFile(path.join(__dirname, "../..", "index.html")).then();
 
     }
 
@@ -92,7 +64,7 @@ namespace FABRICS {
                 contextIsolation: true,
             }
         })
-        startWindow.loadFile(path.join(__dirname, "../../assets/pages/start_page.html"));
+        startWindow.loadFile(path.join(__dirname, "../../start_page.html")).then();
         startWindow.on('ready-to-show', () => {
             startWindow.show();
         });
@@ -126,7 +98,10 @@ ipcMain.handle("system:all_spaces", () => {
     return utils.UTILS.getAllSpaces()
 });
 ipcMain.handle("system:settings", () => {
-    return utils.UTILS.getSettings()
+    const res = utils.UTILS.getSettings()
+    return res
+
+
 });
 ipcMain.handle("system:space", (e: IpcMainInvokeEvent, name: string) => {
     const spaces = getAllSpaces();
@@ -141,22 +116,54 @@ ipcMain.handle("system:space_make", (e: IpcMainInvokeEvent, name: string, path: 
     utils.UTILS.createSpace(name, path)
     return utils.UTILS.getAllSpaces()
 });
-ipcMain.on("system:settings_update", (e: IpcMainInvokeEvent, settings: utils.UTILS.ISettings) => {
+ipcMain.on("system:settings_update", (e: IpcMainEvent, settings: utils.UTILS.ISettings) => {
     utils.UTILS.saveSettings(settings);
 });
 ipcMain.handle("system:music_meta", async (e: IpcMainInvokeEvent, path_: string) => {
     return parseFiles(path_);
 });
 
+ipcMain.handle("system:playlist_image", async () => {
+    const res = await dialog.showOpenDialog({
+        properties: ["openFile"],
+        filters: [{
+            name: "Изображения",
+            extensions: ["png", "jpeg", "svg", "gif", "jpg"],
+        }]
+    });
+    if (res.canceled) {
+        return [false, ""]
+    }
+    const file = res.filePaths[0];
+    const ext = path.extname(file).substring(1).toLowerCase();
+    let data: string = "";
+    let base: string;
+    if (ext === "svg") {
+        data = fs.readFileSync(file, "utf8");
+        base = Buffer.from(data).toString("base64");
+    } else {
+        base = fs.readFileSync(file).toString("base64");
+
+    }
+
+    const result = `data:image/${ext};base64,${base}`;
+    return [true, result];
+})
 
 
+ipcMain.handle("system:meta", (e: IpcMainInvokeEvent, path: string) => {
+    return readMetaMP3(path);
+})
+
+ipcMain.on("system:save_meta", (e: IpcMainEvent, meta: ExtendedMeta) => {
+    saveMetaMP3(meta);
+})
 
 /**
  *
  */
 app.whenReady().then(() => {
-    // ipcMain.handle("display:page", HANDLERS.returnPage);
-
+    CHECK.startCheck();
 
     FABRICS.createStartWindow();
     FABRICS.createWindow();
@@ -171,8 +178,8 @@ app.whenReady().then(() => {
     });
 
 
-    startWindow.on("closed",()=>{
-           win.show();
+    startWindow.on("closed", () => {
+        win.show();
 
     });
 });
