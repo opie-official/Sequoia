@@ -196,7 +196,7 @@ function saveMetaMP3(meta) {
     console.log(data);
     fs.writeFileSync(path.join(__dirname, "../../preferences/cover.jpg"), Buffer.from(data, "base64"));
     const options = {
-        coverPath: path.join(__dirname, "../../preferences/cover.jpg")
+        attachments: [path.join(__dirname, "../../preferences/cover.jpg")]
     };
     ff.write(meta.path_to, tags, options, (err) => {
         if (err) {

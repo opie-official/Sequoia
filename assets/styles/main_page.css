@@ -485,7 +485,7 @@
 #label-author {
     text-align: start;
     color: #BABABA;
-    font-size: 7pt;
+    font-size: 10pt;
     overflow: hidden;
     word-wrap: break-word;
     width: 100%;
@@ -497,7 +497,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 10%;
+    gap: 5%;
     position: relative;
 }
 

@@ -374,7 +374,6 @@ class UpdateManager {
             const index = i;
             const result = spaceFabric(i, spaces[i]);
             result.addEventListener("click", async () => {
-                console.log("clicked")
                 await select(index);
             });
             spaces_div.append(result);
@@ -455,8 +454,10 @@ async function setupAudio() {
         manager.settings.current_space = 0;
     }
     if (manager.settings.current_space === -1) {
+        console.log("setupAudio returned")
         return;
     }
+    console.log("setupAudio continue")
     const spaces = manager.settings.spaces;
     const i = manager.settings.current_space;
     const info = document.getElementById("space-name") as HTMLParagraphElement;
@@ -551,7 +552,7 @@ function playlistsAudioFabric(index: number, meta: Meta): HTMLDivElement {
     const album = document.createElement("p");
     const duration = document.createElement("p");
     const group = document.createElement("div");
-
+    const img = document.createElement("img");
     body.classList.add("playlist-body");
 
     checkbox.type = "checkbox";
@@ -561,6 +562,9 @@ function playlistsAudioFabric(index: number, meta: Meta): HTMLDivElement {
     index_.textContent = cutText(index.toString(), 15);
 
     div.classList.add("playlist-body-pic-out");
+
+    img.src =meta.pictures? meta.pictures : "assets/images/playlist_logo.svg";
+    div.append(img)
 
     name.classList.add("playlist-body-name");
     name.textContent = cutText(`${meta.name}`, 15);

@@ -10,11 +10,12 @@
     width: 10%;
     height: 3%;
     position: absolute;
-    top: 3%;
-    left: 5%;
+    top: 5%;
+    /*left: 2%;*/
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 10%;
 }
 
 .tag-button {

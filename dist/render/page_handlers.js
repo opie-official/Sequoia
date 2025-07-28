@@ -236,7 +236,8 @@ function bindButtons() {
     });
     const tags_button = document.getElementById("selected-edit-tags");
     tags_button.addEventListener("click", async () => {
-        errorFabric("Функция в разработке");
+        // errorFabric("Функция в разработке");
+        await editTagsHandler();
     });
     const tags_undo = document.getElementById("tag-undo");
     tags_undo.addEventListener("click", async () => {
@@ -245,89 +246,68 @@ function bindButtons() {
         footer.classList.remove("disabled");
         await selectedHandler();
     });
-    //
-    // const filename = document.querySelector("#tag-filename") as HTMLInputElement;
-    // const name = document.querySelector("#tag-name") as HTMLInputElement;
-    // const album = document.querySelector("#tag-album") as HTMLInputElement;
-    // const artist = document.querySelector("#tag-artist") as HTMLInputElement;
-    // const executor = document.querySelector("#tag-executor") as HTMLInputElement;
-    // const composer = document.querySelector("#tag-composer") as HTMLInputElement;
-    // const icon_remove = document.querySelector("#tag-remove-icon") as HTMLButtonElement;
-    // const icon_select = document.querySelector("#tag-new-icon") as HTMLButtonElement;
-    // const icon = document.querySelector("#tag-icon-1") as HTMLImageElement;
-    // const genre = document.querySelector("#tag-genre") as HTMLInputElement;
-    // const description = document.querySelector("#tag-desc") as HTMLInputElement;
-    // const year = document.querySelector("#tag-year") as HTMLInputElement;
-    // const number = document.querySelector("#tag-number") as HTMLInputElement;
-    // const disk = document.querySelector("#tag-disc-number") as HTMLInputElement;
-    //
-    //
-    // icon_remove.addEventListener("click", () => {
-    //     icon.src = "assets/images/playlist_logo.svg";
-    //
-    // })
-    //
-    //
-    // icon_select.addEventListener("click", async () => {
-    //     const res = await manager.api.getPlaylistImage()
-    //     if (res[0]) {
-    //         icon.src = res[1];
-    //
-    //     }
-    // })
-    //
-    // const tags_redo = document.querySelector("#tag-redo") as HTMLButtonElement;
-    //
-    // tags_redo.addEventListener("click", async () => {
-    //     return;
-    //     // if (!manager.current_audio_for_edit) {
-    //     //     errorFabric("Ни одно аудио не выбрано");
-    //     //     return;
-    //     // }
-    //     //
-    //     // const meta: ExtendedMeta = {
-    //     //     filepath: manager.current_audio_for_edit_path,
-    //     //     filename: filename.value ?? manager.current_audio_for_edit_name,
-    //     //     name: name.value ?? "",
-    //     //     description: description.value ?? "",
-    //     //     album: album.value ?? "",
-    //     //     artist: artist.value ?? "",
-    //     //     executor: executor.value ?? "",
-    //     //     composer: composer.value ?? "",
-    //     //     genre: genre.value ?? "",
-    //     //     year: year.value ?? "",
-    //     //     number: number.value ?? "",
-    //     //     disk_number: disk.value ?? "",
-    //     //     icon: icon.src.replace("data:image/png;base64,", ""),
-    //     //     path_to: manager.current_audio_for_edit_path_to
-    //     // }
-    //     //
-    //     // console.log(JSON.stringify(meta))
-    //     //
-    //     // const children = (document.getElementById("tag-audio") as HTMLDivElement).childNodes;
-    //     //
-    //     // const old_name = manager.all_audio[manager.current_audio_for_edit].name;
-    //     //
-    //     // manager.all_audio[manager.current_audio_for_edit].name = filename.value?? manager.current_audio_for_edit_name;
-    //     // const playlists = manager.settings.spaces[manager.settings.current_space].playlists;
-    //     // playlists.forEach((val1, index) => {
-    //     //     playlists[index].songs.forEach((val, index1)=>{
-    //     //         if (val === old_name){
-    //     //             playlists[index].songs[index1] = filename.value ?? manager.current_audio_for_edit_name
-    //     //         }
-    //     //     })
-    //     //
-    //     // })
-    //     // manager.settings.spaces[manager.settings.current_space].playlists = playlists;
-    //     // manager.api.saveMeta(meta);
-    //     // manager.saveSettings();
-    //     //
-    //     //
-    //     // UpdateManager.updateMain();
-    //     // await editTagsHandler();
-    //     //
-    //
-    // })
+    const filename = document.querySelector("#tag-filename");
+    const name = document.querySelector("#tag-name");
+    const album = document.querySelector("#tag-album");
+    const artist = document.querySelector("#tag-artist");
+    const executor = document.querySelector("#tag-executor");
+    const composer = document.querySelector("#tag-composer");
+    const icon_remove = document.querySelector("#tag-remove-icon");
+    const icon_select = document.querySelector("#tag-new-icon");
+    const icon = document.querySelector("#tag-icon-1");
+    const genre = document.querySelector("#tag-genre");
+    const description = document.querySelector("#tag-desc");
+    const year = document.querySelector("#tag-year");
+    const number = document.querySelector("#tag-number");
+    const disk = document.querySelector("#tag-disc-number");
+    icon_remove.addEventListener("click", () => {
+        icon.src = "assets/images/playlist_logo.svg";
+    });
+    icon_select.addEventListener("click", async () => {
+        const res = await manager.api.getPlaylistImage();
+        if (res[0]) {
+            icon.src = res[1];
+        }
+    });
+    const tags_redo = document.querySelector("#tag-redo");
+    tags_redo.addEventListener("click", async () => {
+        if (manager.current_audio_for_edit === -1) {
+            errorFabric("Ни одно аудио не выбрано");
+            return;
+        }
+        const meta = {
+            filepath: manager.current_audio_for_edit_path,
+            filename: filename.value ?? manager.current_audio_for_edit_name,
+            name: name.value ?? "",
+            description: description.value ?? "",
+            album: album.value ?? "",
+            artist: artist.value ?? "",
+            executor: executor.value ?? "",
+            composer: composer.value ?? "",
+            genre: genre.value ?? "",
+            year: year.value ?? "",
+            number: number.value ?? "",
+            disk_number: disk.value ?? "",
+            icon: icon.src.replace("data:image/png;base64,", ""),
+            path_to: manager.current_audio_for_edit_path_to
+        };
+        const old_name = manager.all_audio[manager.current_audio_for_edit].name;
+        manager.all_audio[manager.current_audio_for_edit].name = filename.value ?? manager.current_audio_for_edit_name;
+        const playlists = manager.settings.spaces[manager.settings.current_space].playlists;
+        playlists.forEach((val1, index) => {
+            playlists[index].songs.forEach((val, index1) => {
+                if (val === old_name) {
+                    playlists[index].songs[index1] = filename.value ?? manager.current_audio_for_edit_name;
+                }
+            });
+        });
+        manager.settings.spaces[manager.settings.current_space].playlists = playlists;
+        manager.api.saveMeta(meta);
+        manager.saveSettings();
+        await setupAudio();
+        UpdateManager.updateMain();
+        await editTagsHandler();
+    });
 }
 /**
  *
@@ -457,72 +437,56 @@ async function editPlaylistHandler() {
  *
  */
 async function editTagsHandler() {
-    return;
-    // manager.setupPage("tag-page");
-    // UpdateManager.removeChildren("tag-audio");
-    //
-    // const footer = document.querySelector("footer") as HTMLDivElement;
-    // footer.classList.add("disabled");
-    //
-    //
-    // const filename = document.querySelector("#tag-filename") as HTMLInputElement;
-    // const name = document.querySelector("#tag-name") as HTMLInputElement;
-    // const album = document.querySelector("#tag-album") as HTMLInputElement;
-    // const artist = document.querySelector("#tag-artist") as HTMLInputElement;
-    // const executor = document.querySelector("#tag-executor") as HTMLInputElement;
-    // const composer = document.querySelector("#tag-composer") as HTMLInputElement;
-    // const icon = document.querySelector("#tag-icon-1") as HTMLImageElement;
-    // const genre = document.querySelector("#tag-genre") as HTMLInputElement;
-    // const description = document.querySelector("#tag-desc") as HTMLInputElement;
-    // const year = document.querySelector("#tag-year") as HTMLInputElement;
-    // const number = document.querySelector("#tag-number") as HTMLInputElement;
-    // const disk = document.querySelector("#tag-disc-number") as HTMLInputElement;
-    //
-    // icon.src = "assets/images/playlist_logo.svg";
-    //
-    // const list = document.getElementById("tag-audio") as HTMLDivElement;
-    //
-    //
-    // const path = manager.getCurrentSpace().path;
-    //
-    // const res = await manager.api.getExtendedMeta(path);
-    // if (res.length === 0) {
-    //     errorFabric("В текущем пространстве нет песен")
-    //     return;
-    // }
-    //
-    // manager.current_audio_for_edit = -1;
-    //
-    // for (let i = 0; i < res.length; i++) {
-    //     const audio = audioFabric(i, manager.all_audio[i]);
-    //     audio.addEventListener("click", () => {
-    //
-    //         const meta = res[i];
-    //         console.log(`icon?: ${meta.icon ? `data:image/png;base64,${meta.icon}` : "assets/images/playlist_logo.svg"}`)
-    //         filename.value = meta.filename;
-    //         name.value = meta.name;
-    //         album.value = meta.album;
-    //         artist.value = meta.artist;
-    //         executor.value = meta.executor;
-    //         composer.value = meta.composer;
-    //         icon.src = meta.icon ? `data:image/png;base64,${meta.icon}` : "assets/images/playlist_logo.svg";
-    //         genre.value = meta.genre;
-    //         description.value = meta.description;
-    //         year.value = meta.year;
-    //         number.value = meta.number;
-    //         disk.value = meta.disk_number;
-    //
-    //         for (const j of list.children) {
-    //             j.classList.remove("toggled");
-    //         }
-    //         audio.classList.add("toggled");
-    //         manager.current_audio_for_edit = i;
-    //         manager.current_audio_for_edit_name = meta.filename;
-    //         manager.current_audio_for_edit_path = meta.filepath;
-    //         manager.current_audio_for_edit_path_to = meta.path_to
-    //
-    //     })
-    //     list.append(audio);
-    //
-    // }
+    manager.setupPage("tag-page");
+    UpdateManager.removeChildren("tag-audio");
+    const footer = document.querySelector("footer");
+    footer.classList.add("disabled");
+    const filename = document.querySelector("#tag-filename");
+    const name = document.querySelector("#tag-name");
+    const album = document.querySelector("#tag-album");
+    const artist = document.querySelector("#tag-artist");
+    const executor = document.querySelector("#tag-executor");
+    const composer = document.querySelector("#tag-composer");
+    const icon = document.querySelector("#tag-icon-1");
+    const genre = document.querySelector("#tag-genre");
+    const description = document.querySelector("#tag-desc");
+    const year = document.querySelector("#tag-year");
+    const number = document.querySelector("#tag-number");
+    const disk = document.querySelector("#tag-disc-number");
+    icon.src = "assets/images/playlist_logo.svg";
+    const list = document.getElementById("tag-audio");
+    const path = manager.getCurrentSpace().path;
+    const res = await manager.api.getExtendedMeta(path);
+    if (res.length === 0) {
+        errorFabric("В текущем пространстве нет песен");
+        return;
+    }
+    manager.current_audio_for_edit = -1;
+    for (let i = 0; i < res.length; i++) {
+        const audio = audioFabric(i, manager.all_audio[i]);
+        audio.addEventListener("click", () => {
+            const meta = res[i];
+            filename.value = meta.filename;
+            name.value = meta.name;
+            album.value = meta.album;
+            artist.value = meta.artist;
+            executor.value = meta.executor;
+            composer.value = meta.composer;
+            icon.src = meta.icon ? `data:image/png;base64,${meta.icon}` : "assets/images/playlist_logo.svg";
+            genre.value = meta.genre;
+            description.value = meta.description;
+            year.value = meta.year;
+            number.value = meta.number;
+            disk.value = meta.disk_number;
+            for (const j of list.children) {
+                j.classList.remove("toggled");
+            }
+            audio.classList.add("toggled");
+            manager.current_audio_for_edit = i;
+            manager.current_audio_for_edit_name = meta.filename;
+            manager.current_audio_for_edit_path = meta.filepath;
+            manager.current_audio_for_edit_path_to = meta.path_to;
+        });
+        list.append(audio);
+    }
 }

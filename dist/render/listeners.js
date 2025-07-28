@@ -157,6 +157,10 @@ async function setupFooter() {
     document.addEventListener("keydown", (event) => {
         if (event.code === "Space") {
             event.preventDefault();
+            const footer = document.querySelector("footer");
+            if (footer.classList.contains("disabled")) {
+                return;
+            }
             pause_button.click();
         }
     });

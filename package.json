@@ -46,12 +46,12 @@
   "description": "",
   "dependencies": {
     "@types/animejs": "^3.1.13",
+    "ffmetadata": "^1.7.0",
     "music-metadata": "^11.6.0",
     "node-id3": "^0.2.9"
   },
   "devDependencies": {
     "electron": "^37.2.1",
-    "electron-builder": "^26.0.12",
-    "ffmetadata": "^1.7.0"
+    "electron-builder": "^26.0.12"
   }
 }

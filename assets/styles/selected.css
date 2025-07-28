@@ -14,7 +14,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15%;
+    gap: 10%;
 }
 
 .selected-audio-button{
