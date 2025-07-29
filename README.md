@@ -29,5 +29,5 @@ Sequoia - это приложение для прослушивания музы
 ```npm run build``` - компиляция typescript кода<br>
 ```npm run run``` - компиляция и последующий запуск<br>
 ```npm run start``` - запуск без компиляции<br>
-```npm run pack-amd``` - сборка установщика под архитектуру X64<br>
-```npm run pack-arm``` - сборка установщика под архитектуру ARM<br>
+```npm run pack-amd``` - сборка windows-установщика под архитектуру X64<br>
+```npm run pack-arm``` - сборка windows-установщика под архитектуру ARM<br>
