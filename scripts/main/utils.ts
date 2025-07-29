@@ -1,5 +1,6 @@
 import * as fs from "fs"
 import * as path from "node:path";
+import {dialog} from "electron";
 
 
 export namespace UTILS {
@@ -77,6 +78,9 @@ export namespace CHECK {
             }
             fs.writeFileSync(path.join(__dirname, "../../preferences/settings.json"),JSON.stringify(sets));
         }
+
+
+
     }
 
 
@@ -84,4 +88,20 @@ export namespace CHECK {
         return fs.existsSync(path.join(__dirname, "../../preferences/settings.json"));
 
     }
+
+
+
+    export function checkFFMPEG() {
+        const path_env = (process.env.Path as string) || (process.env.PATH as string);
+        const dirs = path_env.split(path.delimiter);
+        for (const dir of dirs){
+            const full_path = path.join(dir, "ffmpeg" + (process.platform === "win32"? ".exe":""));
+            if (fs.existsSync(full_path)) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
 }

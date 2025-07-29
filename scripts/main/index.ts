@@ -155,8 +155,8 @@ ipcMain.handle("system:meta", (e: IpcMainInvokeEvent, path: string) => {
     return readMetaMP3(path);
 })
 
-ipcMain.on("system:save_meta", (e: IpcMainEvent, meta: ExtendedMeta) => {
-    saveMetaMP3(meta);
+ipcMain.handle("system:save_meta", (e: IpcMainInvokeEvent, meta: ExtendedMeta) => {
+    return saveMetaMP3(meta);
 })
 
 /**
@@ -164,11 +164,17 @@ ipcMain.on("system:save_meta", (e: IpcMainEvent, meta: ExtendedMeta) => {
  */
 app.whenReady().then(() => {
     CHECK.startCheck();
+    const ffmpeg_res = CHECK.checkFFMPEG();
 
     FABRICS.createStartWindow();
     FABRICS.createWindow();
 
-
+    if (!ffmpeg_res) {
+        dialog.showMessageBox(win, {
+            "message": "У вас не установлен FFMPEG. Вы не сможете редактировать теги аудио-файлов",
+            type: "warning"
+        })
+    }
     startWindow.once('ready-to-show', () => {
         startWindow.show();
 

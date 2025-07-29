@@ -87,4 +87,16 @@ var CHECK;
     function checkSettings() {
         return fs.existsSync(path.join(__dirname, "../../preferences/settings.json"));
     }
+    function checkFFMPEG() {
+        const path_env = process.env.Path || process.env.PATH;
+        const dirs = path_env.split(path.delimiter);
+        for (const dir of dirs) {
+            const full_path = path.join(dir, "ffmpeg" + (process.platform === "win32" ? ".exe" : ""));
+            if (fs.existsSync(full_path)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    CHECK.checkFFMPEG = checkFFMPEG;
 })(CHECK || (exports.CHECK = CHECK = {}));

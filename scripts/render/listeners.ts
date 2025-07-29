@@ -4,7 +4,7 @@
 
 
 /**
- *
+ * Function that`s setup footer buttons
  */
 async function setupFooter() {
 

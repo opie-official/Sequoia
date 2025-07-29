@@ -145,6 +145,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    transition: all 0.3s;
+    &:hover{
+        filter: brightness(1.5);
+    }
 }
 
 #main-settings img {
@@ -258,7 +262,7 @@
 
 #filters-sorting {
     background: var(--main);
-    color: white;
+    color: #BABABA;
     display: flex;
     justify-content: center;
     align-items: center;

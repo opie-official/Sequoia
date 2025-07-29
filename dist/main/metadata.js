@@ -42,6 +42,7 @@ const path = __importStar(require("path"));
 //@ts-ignore
 const ff = __importStar(require("ffmetadata"));
 const fs = __importStar(require("node:fs"));
+const utils_1 = require("./utils");
 async function parseFiles(path_) {
     const files = await (0, promises_1.readdir)(path_);
     const result = [];
@@ -179,51 +180,62 @@ async function readMetaMP3(path_) {
     return result;
 }
 function saveMetaMP3(meta) {
-    console.log("saving...");
-    const tags = {
-        title: meta.name,
-        description: meta.description,
-        artist: meta.artist,
-        composer: meta.composer,
-        album: meta.album,
-        track: meta.number,
-        disc: meta.disk_number,
-        date: meta.year,
-        genre: meta.genre
-    };
-    //console.log(JSON.stringify(meta))
-    const data = meta.icon.replace("data:image/png;base64,", "");
-    console.log(data);
-    fs.writeFileSync(path.join(__dirname, "../../preferences/cover.jpg"), Buffer.from(data, "base64"));
-    const options = {
-        attachments: [path.join(__dirname, "../../preferences/cover.jpg")]
-    };
-    ff.write(meta.path_to, tags, options, (err) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            console.log("saved");
-            console.log("outed");
-            const ext = path.extname(meta.path_to);
-            console.log("exited");
-            const new_name = path.extname(path.join(meta.filepath, meta.filename)) === ext ?
-                path.join(meta.filepath, meta.filename)
-                : path.join(meta.filepath, meta.filename + ext);
-            console.log(`${new_name}\n${meta.path_to}`);
-            if (new_name !== meta.path_to) {
-                fs.rename(meta.path_to, new_name, (err) => {
-                    if (err) {
-                        console.log(err);
-                    }
-                    else {
-                        console.log("renamed");
-                    }
-                });
+    const res = utils_1.CHECK.checkFFMPEG();
+    if (!res) {
+        return false;
+    }
+    try {
+        console.log("saving...");
+        const tags = {
+            title: meta.name,
+            description: meta.description,
+            artist: meta.artist,
+            composer: meta.composer,
+            album: meta.album,
+            track: meta.number,
+            disc: meta.disk_number,
+            date: meta.year,
+            genre: meta.genre
+        };
+        //console.log(JSON.stringify(meta))
+        const data = meta.icon.replace("data:image/png;base64,", "");
+        console.log(data);
+        fs.writeFileSync(path.join(__dirname, "../../preferences/cover.jpg"), Buffer.from(data, "base64"));
+        const options = {
+            attachments: [path.join(__dirname, "../../preferences/cover.jpg")]
+        };
+        ff.write(meta.path_to, tags, options, (err) => {
+            if (err) {
+                console.log(err);
             }
             else {
-                console.log("not renamed");
+                console.log("saved");
+                console.log("outed");
+                const ext = path.extname(meta.path_to);
+                console.log("exited");
+                const new_name = path.extname(path.join(meta.filepath, meta.filename)) === ext ?
+                    path.join(meta.filepath, meta.filename)
+                    : path.join(meta.filepath, meta.filename + ext);
+                console.log(`${new_name}\n${meta.path_to}`);
+                if (new_name !== meta.path_to) {
+                    fs.rename(meta.path_to, new_name, (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            console.log("renamed");
+                        }
+                    });
+                }
+                else {
+                    console.log("not renamed");
+                }
             }
-        }
-    });
+        });
+        return true;
+    }
+    catch (e) {
+        console.log(e);
+        return false;
+    }
 }

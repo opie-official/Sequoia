@@ -177,16 +177,23 @@ electron_1.ipcMain.handle("system:playlist_image", async () => {
 electron_1.ipcMain.handle("system:meta", (e, path) => {
     return (0, metadata_1.readMetaMP3)(path);
 });
-electron_1.ipcMain.on("system:save_meta", (e, meta) => {
-    (0, metadata_1.saveMetaMP3)(meta);
+electron_1.ipcMain.handle("system:save_meta", (e, meta) => {
+    return (0, metadata_1.saveMetaMP3)(meta);
 });
 /**
  *
  */
 electron_1.app.whenReady().then(() => {
     utils_1.CHECK.startCheck();
+    const ffmpeg_res = utils_1.CHECK.checkFFMPEG();
     FABRICS.createStartWindow();
     FABRICS.createWindow();
+    if (!ffmpeg_res) {
+        electron_1.dialog.showMessageBox(win, {
+            "message": "У вас не установлен FFMPEG. Вы не сможете редактировать теги аудио-файлов",
+            type: "warning"
+        });
+    }
     startWindow.once('ready-to-show', () => {
         startWindow.show();
         setTimeout(() => {

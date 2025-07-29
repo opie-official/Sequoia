@@ -76,7 +76,7 @@
 }
 
 #tag-icon {
-    width: 35%;
+    width: 30%;
     aspect-ratio: 1/1;
     border-radius: 20px;
     display: flex;
@@ -86,6 +86,7 @@
     border: 0 solid;
     overflow: hidden;
     position: relative;
+    bottom: 17%;
 }
 
 #tag-icon-1 {
@@ -145,6 +146,8 @@
     justify-content: start;
     align-items: center;
     gap: 10%;
+    position: relative;
+    bottom: 17%;
 }
 
 
@@ -222,4 +225,32 @@
     -webkit-appearance: none;
     border-radius: 100px;
     width: 5px;
+}
+#tags-info{
+    position: absolute;
+    top: 87%;
+    width: 20%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5%;
+}
+#tags-info-logo{
+    height: 100%;
+    aspect-ratio: 1/1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#tags-info-logo>img{
+    width: 70%;
+}
+
+#tags-info-p{
+    font-size: 20pt;
+    color: white;
 }
