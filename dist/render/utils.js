@@ -1,4 +1,5 @@
 "use strict";
+// type render_mode = "name" | "album" | "artist";
 /**
  * @class MainManager
  * A class of app manager that responsible for keep settings and api and their update
@@ -21,6 +22,7 @@ class MainManager {
     current_audio_for_edit_name = "";
     current_audio_for_edit_path = "";
     current_audio_for_edit_path_to = "";
+    render_mode_of_audio = "name";
     constructor(api, settings, root) {
         this.api = api;
         this.settings = settings;
@@ -62,6 +64,7 @@ class MainManager {
                     this.playlist_audio.push(i);
                 }
             }
+            this.changePlaylistAudio();
             // console.log(`playlist_audio: ${this.playlist_audio}`)
         }
         else {
@@ -129,6 +132,45 @@ class MainManager {
         manager.current_playlist_index = 0;
         this.saveSettings();
     }
+    changePlaylistAudio() {
+        if (this.render_mode_of_audio === "album") {
+            console.log("album");
+            this.playlist_audio = this.playlist_audio.sort((a, b) => {
+                try {
+                    return a.album.localeCompare(b.album);
+                }
+                catch {
+                    return 1;
+                }
+            });
+        }
+        else if (this.render_mode_of_audio === "name") {
+            console.log("name");
+            this.playlist_audio = this.playlist_audio.sort((a, b) => {
+                try {
+                    return a.name.localeCompare(b.name);
+                }
+                catch {
+                    return 1;
+                }
+            });
+        }
+        else if (this.render_mode_of_audio === "artist") {
+            console.log("artist");
+            this.playlist_audio = this.playlist_audio.sort((a, b) => {
+                try {
+                    return a.artist.localeCompare(b.artist);
+                }
+                catch {
+                    return 1;
+                }
+            });
+        }
+        else {
+            console.log("no one");
+        }
+        console.log(this.playlist_audio);
+    }
 }
 /**
  * @class UpdateManager
@@ -153,6 +195,7 @@ class UpdateManager {
      *
      */
     static updateMain() {
+        console.log("update main");
         this.updateMain_Playlists();
         this.updateMain_Songs();
         this.updateMain_Messages();
@@ -210,6 +253,7 @@ class UpdateManager {
             result.addEventListener("click", async () => {
                 manager.current_playlist_index = index;
                 manager.setCurrentPlaylist();
+                manager.changePlaylistAudio();
                 for (const j of playlists_div.children) {
                     j.classList.remove("toggled-playlist");
                 }
@@ -352,9 +396,6 @@ function showCurrentAudio() {
         console.log(e);
     }
 }
-/**
- * @file fabrics
- */
 /**
  * Create a space widget
  * @param index {number} an index of space

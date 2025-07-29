@@ -3,7 +3,7 @@
  *
  */
 /**
- *
+ * Function that`s setup footer buttons
  */
 async function setupFooter() {
     const volume_range = document.getElementById("volume");

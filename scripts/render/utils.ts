@@ -92,9 +92,11 @@ interface API {
     getMusicMeta: (path: string) => Promise<any[]>,
     getPlaylistImage: () => Promise<[boolean, string]>,
     getExtendedMeta: (path: string) => Promise<ExtendedMeta[]>,
-    saveMeta: (meta: ExtendedMeta) => void
+    saveMeta: (meta: ExtendedMeta) => Promise<boolean>
 
 }
+
+// type render_mode = "name" | "album" | "artist";
 
 /**
  * @class MainManager
@@ -121,6 +123,8 @@ class MainManager {
     public current_audio_for_edit_name = "";
     public current_audio_for_edit_path = "";
     public current_audio_for_edit_path_to = "";
+
+    public render_mode_of_audio: string = "name";
 
     constructor(api: API, settings: ISettings, root: HTMLDivElement) {
         this.api = api;
@@ -164,6 +168,7 @@ class MainManager {
                     this.playlist_audio.push(i);
                 }
             }
+            this.changePlaylistAudio();
             // console.log(`playlist_audio: ${this.playlist_audio}`)
         } else {
         }            // console.log("error: all_audio is null")
@@ -242,6 +247,44 @@ class MainManager {
         this.saveSettings();
     }
 
+
+    changePlaylistAudio() {
+        if (this.render_mode_of_audio === "album") {
+            console.log("album")
+            this.playlist_audio = this.playlist_audio.sort((a, b) => {
+                try {
+                    return a.album.localeCompare(b.album);
+                } catch {
+                    return 1
+                }
+            })
+
+        } else if (this.render_mode_of_audio === "name") {
+            console.log("name")
+            this.playlist_audio = this.playlist_audio.sort((a, b) => {
+                try {
+                    return a.name.localeCompare(b.name);
+                } catch {
+                    return 1
+                }
+            })
+
+        } else if (this.render_mode_of_audio === "artist") {
+            console.log("artist")
+            this.playlist_audio = this.playlist_audio.sort((a, b) => {
+                try {
+                    return a.artist.localeCompare(b.artist);
+                } catch {
+                    return 1
+                }
+            })
+
+        } else {
+            console.log("no one")
+        }
+        console.log(this.playlist_audio)
+    }
+
 }
 
 /**
@@ -268,6 +311,7 @@ class UpdateManager {
      *
      */
     static updateMain() {
+        console.log("update main")
         this.updateMain_Playlists();
         this.updateMain_Songs();
         this.updateMain_Messages();
@@ -284,6 +328,8 @@ class UpdateManager {
         }
         manager.setCurrentPlaylist();
         const audio_div = document.getElementById("main-audio") as HTMLAudioElement;
+
+
         for (let i = 0; i < manager.playlist_audio.length; i++) {
             const index = i;
             const audio = manager.playlist_audio[index];
@@ -308,6 +354,7 @@ class UpdateManager {
             });
             songs_div.append(result);
         }
+
     }
 
     /**
@@ -331,6 +378,7 @@ class UpdateManager {
             result.addEventListener("click", async () => {
                 manager.current_playlist_index = index;
                 manager.setCurrentPlaylist();
+                manager.changePlaylistAudio()
                 for (const j of playlists_div.children) {
                     j.classList.remove("toggled-playlist");
                 }
@@ -504,11 +552,6 @@ function showCurrentAudio() {
 
 
 /**
- * @file fabrics
- */
-
-
-/**
  * Create a space widget
  * @param index {number} an index of space
  * @param space {ISpace} an object with properties of space
@@ -563,7 +606,7 @@ function playlistsAudioFabric(index: number, meta: Meta): HTMLDivElement {
 
     div.classList.add("playlist-body-pic-out");
 
-    img.src =meta.pictures? meta.pictures : "assets/images/playlist_logo.svg";
+    img.src = meta.pictures ? meta.pictures : "assets/images/playlist_logo.svg";
     div.append(img)
 
     name.classList.add("playlist-body-name");

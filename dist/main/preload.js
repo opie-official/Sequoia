@@ -41,7 +41,7 @@ electron_1.contextBridge.exposeInMainWorld("__API__", {
     getExtendedMeta: async (path) => {
         return await electron_1.ipcRenderer.invoke("system:meta", path);
     },
-    saveMeta: (meta) => {
-        electron_1.ipcRenderer.send("system:save_meta", meta);
+    saveMeta: async (meta) => {
+        return await electron_1.ipcRenderer.invoke("system:save_meta", meta);
     }
 });

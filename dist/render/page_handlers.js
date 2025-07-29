@@ -302,11 +302,22 @@ function bindButtons() {
             });
         });
         manager.settings.spaces[manager.settings.current_space].playlists = playlists;
-        manager.api.saveMeta(meta);
+        const res = await manager.api.saveMeta(meta);
+        if (!res) {
+            errorFabric("FFMPEG не установлен");
+            return;
+        }
         manager.saveSettings();
         await setupAudio();
         UpdateManager.updateMain();
         await editTagsHandler();
+    });
+    const select = document.getElementById("filters-sorting");
+    select.addEventListener("change", (e) => {
+        manager.render_mode_of_audio = e.target.value;
+        console.log(`${manager.render_mode_of_audio} :: selected`);
+        manager.changePlaylistAudio();
+        UpdateManager.updateMain();
     });
 }
 /**

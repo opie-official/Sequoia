@@ -1,13 +1,12 @@
 import {readdir} from "fs/promises"
 import {IPicture, parseFile} from "music-metadata"
 import * as path from "path"
-import * as id3 from "node-id3"
-import {Tags} from "node-id3";
+
 //@ts-ignore
 import * as ff from "ffmetadata"
 import * as fs from "node:fs";
-import {UTILS} from "./utils";
-import getSettings = UTILS.getSettings;
+import {UTILS, CHECK} from "./utils";
+
 
 export interface Meta {
     name: string,
@@ -182,57 +181,67 @@ export async function readMetaMP3(path_: string) {
 }
 
 
-export function saveMetaMP3(meta: ExtendedMeta) {
-    console.log("saving...")
-    const tags = {
-        title: meta.name,
-        description: meta.description,
-        artist: meta.artist,
-        composer: meta.composer,
-        album: meta.album,
-        track: meta.number,
-        disc: meta.disk_number,
-        date: meta.year,
-        genre: meta.genre
-    };
-    //console.log(JSON.stringify(meta))
-    const data = meta.icon.replace("data:image/png;base64,", "");
-    console.log(data)
-    fs.writeFileSync(path.join(__dirname, "../../preferences/cover.jpg"), Buffer.from(data, "base64"))
+export function saveMetaMP3(meta: ExtendedMeta): boolean {
+    const res = CHECK.checkFFMPEG();
+    if (!res){
+        return false;
+    }
+    try {
+        console.log("saving...")
+        const tags = {
+            title: meta.name,
+            description: meta.description,
+            artist: meta.artist,
+            composer: meta.composer,
+            album: meta.album,
+            track: meta.number,
+            disc: meta.disk_number,
+            date: meta.year,
+            genre: meta.genre
+        };
+        //console.log(JSON.stringify(meta))
+        const data = meta.icon.replace("data:image/png;base64,", "");
+        console.log(data)
+        fs.writeFileSync(path.join(__dirname, "../../preferences/cover.jpg"), Buffer.from(data, "base64"))
 
-    const options = {
-        attachments: [path.join(__dirname, "../../preferences/cover.jpg")]
-    };
-    ff.write(meta.path_to, tags, options, (err: any) => {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log("saved")
+        const options = {
+            attachments: [path.join(__dirname, "../../preferences/cover.jpg")]
+        };
+        ff.write(meta.path_to, tags, options, (err: any) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log("saved")
 
-            console.log("outed")
-            const ext = path.extname(meta.path_to)
-            console.log("exited")
-            const new_name = path.extname(path.join(meta.filepath, meta.filename)) === ext ?
-                path.join(meta.filepath, meta.filename)
-                : path.join(meta.filepath, meta.filename+ ext);
+                console.log("outed")
+                const ext = path.extname(meta.path_to)
+                console.log("exited")
+                const new_name = path.extname(path.join(meta.filepath, meta.filename)) === ext ?
+                    path.join(meta.filepath, meta.filename)
+                    : path.join(meta.filepath, meta.filename + ext);
 
-            console.log(`${new_name}\n${meta.path_to}`)
+                console.log(`${new_name}\n${meta.path_to}`)
 
-            if (new_name !== meta.path_to) {
+                if (new_name !== meta.path_to) {
 
-                fs.rename(meta.path_to, new_name, (err: any) => {
-                    if (err) {
-                        console.log(err)
-                    }else{
-                        console.log("renamed")
-                    }
-                });
-            }else{
-                console.log("not renamed")
+                    fs.rename(meta.path_to, new_name, (err: any) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            console.log("renamed")
+                        }
+                    });
+                } else {
+                    console.log("not renamed")
+                }
+
+
             }
-
-
-        }
-    })
+        })
+        return true
+    } catch (e) {
+        console.log(e)
+        return false;
+    }
 
 }

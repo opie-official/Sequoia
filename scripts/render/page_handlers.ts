@@ -371,7 +371,11 @@ function bindButtons() {
 
         })
         manager.settings.spaces[manager.settings.current_space].playlists = playlists;
-        manager.api.saveMeta(meta);
+        const res = await manager.api.saveMeta(meta);
+        if (!res){
+            errorFabric("FFMPEG не установлен")
+            return;
+        }
         manager.saveSettings();
 
 
@@ -382,6 +386,14 @@ function bindButtons() {
 
     })
 
+    const select = document.getElementById("filters-sorting") as HTMLSelectElement;
+    select.addEventListener("change", (e)=>{
+
+        manager.render_mode_of_audio = (e.target as HTMLSelectElement).value;
+        console.log(`${manager.render_mode_of_audio} :: selected`)
+        manager.changePlaylistAudio();
+        UpdateManager.updateMain();
+    })
 }
 
 /**

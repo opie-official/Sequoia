@@ -78,7 +78,7 @@ contextBridge.exposeInMainWorld("__API__", {
     getExtendedMeta: async(path: string)=>{
         return await ipcRenderer.invoke("system:meta", path);
     },
-    saveMeta: (meta: ExtendedMeta)=>{
-        ipcRenderer.send("system:save_meta", meta)
+    saveMeta: async (meta: ExtendedMeta)=>{
+        return await ipcRenderer.invoke("system:save_meta", meta)
     }
 })

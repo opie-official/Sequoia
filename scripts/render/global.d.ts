@@ -51,7 +51,7 @@ declare global {
             getMusicMeta: (path:string)=>Promise<any[]>,
             getPlaylistImage: ()=>Promise<[boolean, string]>,
             getExtendedMeta: (path: string)=>Promise<ExtendedMeta[]>,
-            saveMeta: (meta: ExtendedMeta)=>void
+            saveMeta: (meta: ExtendedMeta) => Promise<boolean>
         }
     }
 }
