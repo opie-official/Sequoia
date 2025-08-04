@@ -43,5 +43,8 @@ electron_1.contextBridge.exposeInMainWorld("__API__", {
     },
     saveMeta: async (meta) => {
         return await electron_1.ipcRenderer.invoke("system:save_meta", meta);
+    },
+    getTheme: async () => {
+        return await electron_1.ipcRenderer.invoke("display:get_theme");
     }
 });

@@ -1,0 +1,43 @@
+{
+  "name": "dark",
+  "styles": {
+    "utils": {
+      "undo": "#C74444",
+      "undo_hover": "#cc5656",
+      "redo": "#46EE4C",
+      "redo_hover": "#5ae45f",
+      "reset": "#E87B32FF",
+      "reset_hover": "e38749"
+    },
+    "main_color": "#19191B",
+    "aside_color": "#232427",
+    "footer": {
+      "color": "#2A2B2D",
+      "button": "#878787",
+      "hover": "#BABABA",
+      "active": "white"
+    },
+    "text": {
+      "font": "",
+      "title": "white",
+      "subtitle": "#d9d9d9"
+    },
+    "buttons": {
+      "fill_bg": "#d9d9d9",
+      "main_hover": "#FFFFFF19",
+      "active": "white",
+      "aside_hover": "#FFFFFF33",
+      "fill_hover": "white"
+    },
+    "input": {
+      "bg": "black",
+      "color": "white",
+      "border": "#d9d9d9"
+    },
+    "svg": "#d9d9d9",
+    "title_bar": {
+      "bg": "#BABABA"
+    },
+    "range": "#999999"
+  }
+}

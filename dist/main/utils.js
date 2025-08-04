@@ -78,7 +78,8 @@ var CHECK;
                 doctype: "opie/seq",
                 version: "",
                 spaces: [],
-                current_space: -1
+                current_space: -1,
+                theme: "dark"
             };
             fs.writeFileSync(path.join(__dirname, "../../preferences/settings.json"), JSON.stringify(sets));
         }

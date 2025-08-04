@@ -19,7 +19,8 @@ async function setupFooter() {
     const loop_button = document.getElementById("other-loop");
     const random_button = document.getElementById("other-random");
     pause_button.addEventListener("click", () => {
-        const img = pause_button.querySelector("img");
+        const svg1 = document.getElementById("play-svg");
+        const svg2 = document.getElementById("pause-svg");
         if (manager.paused) {
             try {
                 audio.play();
@@ -27,7 +28,8 @@ async function setupFooter() {
             catch {
             }
             manager.paused = false;
-            img.src = "assets/images/play.svg";
+            svg1.style.opacity = "1";
+            svg2.style.opacity = "0";
         }
         else {
             try {
@@ -36,7 +38,8 @@ async function setupFooter() {
             catch {
             }
             manager.paused = true;
-            img.src = "assets/images/pause.svg";
+            svg1.style.opacity = "0";
+            svg2.style.opacity = "1";
         }
     });
     rewind_prev.addEventListener("click", () => {
@@ -81,7 +84,7 @@ async function setupFooter() {
         await audio.play();
         showCurrentAudio();
     });
-    loop_button.addEventListener("click", () => {
+    loop_button.addEventListener("click", async () => {
         manager.looped = !manager.looped;
         if (manager.looped) {
             loop_button.classList.add("clicked");
@@ -180,7 +183,7 @@ async function createNewSpace() {
     {
         body.id = "custom-prompt";
         p.id = "custom-prompt-p";
-        p.textContent = "Введите название пространства";
+        p.textContent = "Введите название для папки";
         input.id = "custom-prompt-input";
         accept.id = "custom-prompt-accept";
         accept.appendChild(document.createTextNode("Подтвердить"));

@@ -1,5 +1,10 @@
 "use strict";
 /**
+ * @file page_handlers
+ * @author OPIE
+ *
+ */
+/**
  *
  */
 async function mainHandler(has = false) {
@@ -19,6 +24,10 @@ async function spaceHandler() {
  *
  */
 async function playlistsHandler() {
+    if (manager.settings.current_space === -1) {
+        errorFabric("Ни одна папка не выбрана");
+        return;
+    }
     manager.setupPage("playlists");
     UpdateManager.updatePlaylists();
 }
@@ -169,6 +178,10 @@ function bindButtons() {
     });
     const playlist_edit = document.getElementById("main-create-edit-playlist");
     playlist_edit.addEventListener("click", async () => {
+        if (manager.settings.current_space === -1) {
+            errorFabric("Ни одна папка не выбрана");
+            return;
+        }
         await editPlaylistHandler();
     });
     const space_delete = document.getElementById("space-delete");
@@ -206,13 +219,7 @@ function bindButtons() {
         if (manager.settings.current_space === -1) {
             return;
         }
-        try {
-            manager.playlist_audio[manager.current_audio_index];
-            await selectedHandler();
-        }
-        catch {
-            return;
-        }
+        await selectedHandler();
     });
     const equalizer = document.querySelector("#equalizer");
     equalizer.addEventListener("click", async () => {
@@ -294,7 +301,7 @@ function bindButtons() {
         const old_name = manager.all_audio[manager.current_audio_for_edit].name;
         manager.all_audio[manager.current_audio_for_edit].name = filename.value ?? manager.current_audio_for_edit_name;
         const playlists = manager.settings.spaces[manager.settings.current_space].playlists;
-        playlists.forEach((val1, index) => {
+        playlists.forEach((_, index) => {
             playlists[index].songs.forEach((val, index1) => {
                 if (val === old_name) {
                     playlists[index].songs[index1] = filename.value ?? manager.current_audio_for_edit_name;
@@ -318,6 +325,153 @@ function bindButtons() {
         console.log(`${manager.render_mode_of_audio} :: selected`);
         manager.changePlaylistAudio();
         UpdateManager.updateMain();
+    });
+    const arrow = document.getElementById("main-arrow");
+    const main_audio = document.getElementById("main-songs");
+    arrow.addEventListener("click", () => {
+        const result = main_audio.children[manager.current_audio_index];
+        main_audio.scrollTo({
+            top: result.offsetTop,
+            behavior: "smooth"
+        });
+    });
+    main_audio.addEventListener("scroll", () => {
+        const result = main_audio.children[manager.current_audio_index];
+        const rect_elem = result.getBoundingClientRect();
+        const rect_parent = main_audio.getBoundingClientRect();
+        let isVisible = (rect_elem.top < rect_parent.bottom);
+        let isVisible2 = (rect_elem.bottom > rect_parent.top);
+        if (!isVisible || !isVisible2) {
+            arrow.classList.remove("disabled");
+            arrow.disabled = false;
+        }
+        if (!isVisible) {
+            arrow.classList.remove("turned");
+        }
+        if (!isVisible2) {
+            arrow.classList.remove("disabled");
+            arrow.classList.add("turned");
+            arrow.disabled = false;
+        }
+        if (isVisible && isVisible2) {
+            arrow.disabled = true;
+            arrow.classList.remove("turned");
+            arrow.classList.add("disabled");
+        }
+    });
+    const filter_name = document.getElementById("filters-name");
+    const filter_album = document.getElementById("filters-album");
+    const filter_artist = document.getElementById("filters-artist");
+    const array = [filter_name, filter_artist, filter_album];
+    let is_name_hover = false;
+    let is_album_hover = false;
+    let is_artist_hover = false;
+    let e_x_pos = 0;
+    const hr = document.querySelector("hr");
+    const changeWidthHandler = (e, index) => {
+        hr.classList.add("disabled");
+        if (!is_name_hover && !is_album_hover && !is_artist_hover) {
+            return;
+        }
+        is_name_hover = false;
+        is_artist_hover = false;
+        is_album_hover = false;
+        array.forEach(value => value.classList.remove("entering"));
+        const audio = document.getElementById("main-songs").children;
+        if (audio.length > 0) {
+            for (const i of audio) {
+                const v = i;
+                if (index === 0) {
+                    const name = v.querySelector(".main-song-name");
+                    const rect = filter_name.getBoundingClientRect();
+                    const rect2 = name.getBoundingClientRect();
+                    const x1 = rect.left;
+                    const x2 = rect2.left;
+                    const delimiter = Math.abs(x1 - x2);
+                    const eval_ = rect.width - delimiter;
+                    name.style.width = `${eval_}px`;
+                }
+                else if (index === 1) {
+                    const artist = v.querySelector(".main-song-artist");
+                    const rect = filter_artist.getBoundingClientRect();
+                    const rect2 = artist.getBoundingClientRect();
+                    const x1 = rect.left;
+                    const x2 = rect2.left;
+                    const delimiter = Math.abs(x1 - x2);
+                    const eval_ = rect.width - delimiter;
+                    artist.style.width = `${eval_}px`;
+                }
+                else if (index === 2) {
+                    const album = v.querySelector(".main-song-album");
+                    const rect = filter_album.getBoundingClientRect();
+                    const rect2 = album.getBoundingClientRect();
+                    const x1 = rect.left;
+                    const x2 = rect2.left;
+                    const delimiter = Math.abs(x1 - x2);
+                    const eval_ = rect.width - delimiter;
+                    album.style.width = `${eval_}px`;
+                }
+            }
+        }
+        e_x_pos = 0;
+    };
+    const setupWidthHandler = (type) => {
+        hr.classList.remove("disabled");
+        if (type === 0) {
+            is_name_hover = true;
+            filter_name.classList.add("entering");
+            const rect = filter_name.getBoundingClientRect();
+            hr.style.left = `${rect.left + rect.width - 2}px`;
+        }
+        else if (type === 1) {
+            is_artist_hover = true;
+            filter_artist.classList.add("entering");
+            const rect = filter_artist.getBoundingClientRect();
+            hr.style.left = `${rect.left + rect.width - 2}px`;
+        }
+        else if (type === 2) {
+            filter_album.classList.add("entering");
+            is_album_hover = true;
+            const rect = filter_album.getBoundingClientRect();
+            hr.style.left = `${rect.left + rect.width - 2}px`;
+        }
+    };
+    const moveHandler = (e, i) => {
+        if (!is_name_hover && !is_album_hover && !is_artist_hover) {
+            return;
+        }
+        if (e_x_pos === 0) {
+            e_x_pos = e.clientX;
+            return;
+        }
+        let current;
+        if (i === 0) {
+            current = filter_name;
+        }
+        else if (i === 1) {
+            current = filter_artist;
+        }
+        else {
+            current = filter_album;
+        }
+        const diff = (e.clientX - e_x_pos);
+        if (diff > 10) {
+            current.style.width = `${current.offsetWidth + Math.abs(e.clientX - e_x_pos)}px`;
+            e_x_pos = e.clientX;
+        }
+        else if (diff < -10) {
+            current.style.width = `${current.offsetWidth - Math.abs(e.clientX - e_x_pos)}px`;
+            e_x_pos = e.clientX;
+        }
+        const rect = current.getBoundingClientRect();
+        hr.style.left = `${rect.x + rect.width - 2}px`;
+    };
+    array.forEach((value, key) => {
+        const i = key;
+        value.addEventListener("mousedown", () => setupWidthHandler(i));
+        value.addEventListener("mouseup", (e) => changeWidthHandler(e, i));
+        value.addEventListener("mouseleave", (e) => changeWidthHandler(e, i));
+        value.addEventListener("mousemove", (e) => moveHandler(e, i));
     });
 }
 /**
@@ -374,15 +528,27 @@ function setupEqualizer() {
  */
 async function selectedHandler() {
     manager.setupPage("selected-audio");
-    const current_song = manager.playlist_audio[manager.current_audio_index];
     const logo_button = document.getElementById("footer-audio-logo");
     logo_button.disabled = true;
     const logo = document.getElementById("selected-logo-logo");
     const name = document.getElementById("selected-name");
     const artist = document.getElementById("selected-artist");
-    logo.src = current_song.pictures;
-    name.textContent = current_song.name;
-    artist.textContent = current_song.artist;
+    try {
+        const current_song = manager.playlist_audio[manager.current_audio_index];
+        if (current_song.pictures.length > 0) {
+            logo.src = current_song.pictures;
+        }
+        else {
+            logo.src = "assets/images/playlist_logo.svg";
+        }
+        name.textContent = current_song.name;
+        artist.textContent = current_song.artist;
+    }
+    catch {
+        logo.src = "assets/images/playlist_logo.svg";
+    }
+    console.log(manager.current_audio_index);
+    console.log(logo.src);
     footerToSelected();
 }
 /**
@@ -426,6 +592,10 @@ async function editPlaylistHandler() {
         errorFabric("Нельзя отредактировать этот плейлист");
         return;
     }
+    if (manager.settings.current_space === -1) {
+        errorFabric("Ни одна папка не выбрана");
+        return;
+    }
     manager.setupPage("playlists");
     manager.is_playlist_edit = true;
     UpdateManager.updatePlaylists();
@@ -464,6 +634,17 @@ async function editTagsHandler() {
     const year = document.querySelector("#tag-year");
     const number = document.querySelector("#tag-number");
     const disk = document.querySelector("#tag-disc-number");
+    filename.value = "";
+    name.value = "";
+    album.value = "";
+    artist.value = "";
+    executor.value = "";
+    composer.value = "";
+    genre.value = "";
+    description.value = "";
+    year.value = "";
+    number.value = "";
+    disk.value = "";
     icon.src = "assets/images/playlist_logo.svg";
     const list = document.getElementById("tag-audio");
     const path = manager.getCurrentSpace().path;
@@ -500,4 +681,5 @@ async function editTagsHandler() {
         });
         list.append(audio);
     }
+    setupTheme();
 }

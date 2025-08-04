@@ -1,4 +1,11 @@
 /**
+ * @file page_handlers
+ * @author OPIE
+ *
+ */
+
+
+/**
  *
  */
 async function mainHandler(has: boolean = false) {
@@ -22,6 +29,10 @@ async function spaceHandler() {
  *
  */
 async function playlistsHandler() {
+    if (manager.settings.current_space === -1) {
+        errorFabric("Ни одна папка не выбрана");
+        return;
+    }
     manager.setupPage("playlists");
 
     UpdateManager.updatePlaylists();
@@ -200,6 +211,10 @@ function bindButtons() {
 
     const playlist_edit = document.getElementById("main-create-edit-playlist") as HTMLButtonElement;
     playlist_edit.addEventListener("click", async () => {
+        if (manager.settings.current_space === -1) {
+            errorFabric("Ни одна папка не выбрана");
+            return;
+        }
         await editPlaylistHandler();
     })
 
@@ -246,13 +261,9 @@ function bindButtons() {
         if (manager.settings.current_space === -1) {
             return;
         }
-        try {
 
-            manager.playlist_audio[manager.current_audio_index];
-            await selectedHandler();
-        } catch {
-            return;
-        }
+        await selectedHandler();
+
     })
 
 
@@ -336,7 +347,7 @@ function bindButtons() {
     const tags_redo = document.querySelector("#tag-redo") as HTMLButtonElement;
 
     tags_redo.addEventListener("click", async () => {
-        if (manager.current_audio_for_edit===-1) {
+        if (manager.current_audio_for_edit === -1) {
             errorFabric("Ни одно аудио не выбрано");
             return;
         }
@@ -360,11 +371,11 @@ function bindButtons() {
 
         const old_name = manager.all_audio[manager.current_audio_for_edit].name;
 
-        manager.all_audio[manager.current_audio_for_edit].name = filename.value?? manager.current_audio_for_edit_name;
+        manager.all_audio[manager.current_audio_for_edit].name = filename.value ?? manager.current_audio_for_edit_name;
         const playlists = manager.settings.spaces[manager.settings.current_space].playlists;
-        playlists.forEach((val1, index) => {
-            playlists[index].songs.forEach((val, index1)=>{
-                if (val === old_name){
+        playlists.forEach((_, index) => {
+            playlists[index].songs.forEach((val, index1) => {
+                if (val === old_name) {
                     playlists[index].songs[index1] = filename.value ?? manager.current_audio_for_edit_name
                 }
             })
@@ -372,7 +383,7 @@ function bindButtons() {
         })
         manager.settings.spaces[manager.settings.current_space].playlists = playlists;
         const res = await manager.api.saveMeta(meta);
-        if (!res){
+        if (!res) {
             errorFabric("FFMPEG не установлен")
             return;
         }
@@ -387,13 +398,182 @@ function bindButtons() {
     })
 
     const select = document.getElementById("filters-sorting") as HTMLSelectElement;
-    select.addEventListener("change", (e)=>{
+    select.addEventListener("change", (e) => {
 
         manager.render_mode_of_audio = (e.target as HTMLSelectElement).value;
         console.log(`${manager.render_mode_of_audio} :: selected`)
         manager.changePlaylistAudio();
         UpdateManager.updateMain();
     })
+
+    const arrow = document.getElementById("main-arrow") as HTMLButtonElement;
+
+    const main_audio = document.getElementById("main-songs") as HTMLDivElement;
+
+
+    arrow.addEventListener("click", () => {
+        const result = main_audio.children[manager.current_audio_index] as HTMLDivElement;
+        main_audio.scrollTo({
+            top: result.offsetTop,
+            behavior: "smooth"
+        })
+
+    })
+
+
+    main_audio.addEventListener("scroll", () => {
+        const result = main_audio.children[manager.current_audio_index] as HTMLDivElement;
+        const rect_elem = result.getBoundingClientRect();
+        const rect_parent = main_audio.getBoundingClientRect();
+
+        let isVisible = (rect_elem.top < rect_parent.bottom);
+        let isVisible2 = (rect_elem.bottom > rect_parent.top);
+
+        if (!isVisible || !isVisible2) {
+            arrow.classList.remove("disabled");
+            arrow.disabled = false;
+
+        }
+        if (!isVisible) {
+            arrow.classList.remove("turned");
+        }
+        if (!isVisible2) {
+            arrow.classList.remove("disabled");
+            arrow.classList.add("turned");
+            arrow.disabled = false;
+
+        }
+        if (isVisible && isVisible2) {
+            arrow.disabled = true;
+            arrow.classList.remove("turned");
+            arrow.classList.add("disabled")
+        }
+
+    });
+
+
+    const filter_name = document.getElementById("filters-name") as HTMLParagraphElement;
+    const filter_album = document.getElementById("filters-album") as HTMLParagraphElement;
+    const filter_artist = document.getElementById("filters-artist") as HTMLParagraphElement;
+    const array = [filter_name, filter_artist, filter_album]
+    let is_name_hover = false;
+    let is_album_hover = false;
+    let is_artist_hover = false;
+    let e_x_pos: number = 0;
+
+    const hr = document.querySelector("hr") as HTMLHRElement;
+
+    const changeWidthHandler = (e: MouseEvent, index: number) => {
+        hr.classList.add("disabled")
+        if (!is_name_hover && !is_album_hover && !is_artist_hover) {
+            return;
+        }
+        is_name_hover = false;
+        is_artist_hover = false;
+        is_album_hover = false;
+        array.forEach(value => value.classList.remove("entering"));
+        const audio = (document.getElementById("main-songs") as HTMLDivElement).children;
+
+        if (audio.length > 0) {
+            for (const i of audio) {
+                const v = i as HTMLDivElement;
+                if (index === 0) {
+                    const name = v.querySelector(".main-song-name") as HTMLParagraphElement;
+                    const rect = filter_name.getBoundingClientRect();
+                    const rect2 = name.getBoundingClientRect()
+                    const x1 = rect.left;
+                    const x2 = rect2.left;
+                    const delimiter = Math.abs(x1 - x2);
+
+                    const eval_ = rect.width - delimiter;
+                    name.style.width = `${eval_}px`;
+
+                } else if (index === 1) {
+                    const artist = v.querySelector(".main-song-artist") as HTMLParagraphElement;
+                    const rect = filter_artist.getBoundingClientRect();
+                    const rect2 = artist.getBoundingClientRect()
+                    const x1 = rect.left;
+                    const x2 = rect2.left;
+                    const delimiter = Math.abs(x1 - x2);
+
+                    const eval_ = rect.width - delimiter;
+                    artist.style.width = `${eval_}px`;
+                } else if (index === 2) {
+                    const album = v.querySelector(".main-song-album") as HTMLParagraphElement;
+                    const rect = filter_album.getBoundingClientRect();
+                    const rect2 = album.getBoundingClientRect()
+                    const x1 = rect.left;
+                    const x2 = rect2.left;
+                    const delimiter = Math.abs(x1 - x2);
+
+                    const eval_ = rect.width - delimiter;
+                    album.style.width = `${eval_}px`;
+                }
+            }
+        }
+        e_x_pos = 0;
+    }
+    const setupWidthHandler = (type: number) => {
+        hr.classList.remove("disabled");
+        if (type === 0) {
+            is_name_hover = true;
+            filter_name.classList.add("entering");
+            const rect = filter_name.getBoundingClientRect();
+            hr.style.left = `${rect.left + rect.width - 2}px`;
+
+        } else if (type === 1) {
+            is_artist_hover = true
+            filter_artist.classList.add("entering");
+            const rect = filter_artist.getBoundingClientRect();
+            hr.style.left = `${rect.left + rect.width - 2}px`;
+
+        } else if (type === 2) {
+            filter_album.classList.add("entering");
+            is_album_hover = true;
+            const rect = filter_album.getBoundingClientRect();
+            hr.style.left = `${rect.left + rect.width - 2}px`;
+
+        }
+    }
+
+    const moveHandler = (e: MouseEvent, i: number) => {
+        if (!is_name_hover && !is_album_hover && !is_artist_hover) {
+            return;
+        }
+        if (e_x_pos === 0) {
+            e_x_pos = e.clientX;
+            return;
+        }
+        let current: HTMLParagraphElement;
+        if (i === 0) {
+            current = filter_name;
+        } else if (i === 1) {
+            current = filter_artist;
+        } else {
+            current = filter_album;
+        }
+
+        const diff = (e.clientX - e_x_pos);
+        if (diff > 10) {
+            current.style.width = `${current.offsetWidth + Math.abs(e.clientX - e_x_pos)}px`;
+            e_x_pos = e.clientX;
+
+        } else if (diff < -10) {
+            current.style.width = `${current.offsetWidth - Math.abs(e.clientX - e_x_pos)}px`;
+            e_x_pos = e.clientX;
+
+        }
+        const rect = current.getBoundingClientRect();
+        hr.style.left = `${rect.x + rect.width - 2}px`;
+    }
+    array.forEach((value, key) => {
+        const i = key;
+        value.addEventListener("mousedown", () => setupWidthHandler(i));
+        value.addEventListener("mouseup", (e) => changeWidthHandler(e, i));
+        value.addEventListener("mouseleave", (e) => changeWidthHandler(e, i));
+        value.addEventListener("mousemove", (e) => moveHandler(e, i));
+    })
+
 }
 
 /**
@@ -465,16 +645,26 @@ function setupEqualizer() {
  */
 async function selectedHandler() {
     manager.setupPage("selected-audio");
-    const current_song: Meta = manager.playlist_audio[manager.current_audio_index];
     const logo_button = document.getElementById("footer-audio-logo") as HTMLButtonElement;
     logo_button.disabled = true;
     const logo = document.getElementById("selected-logo-logo") as HTMLImageElement;
     const name = document.getElementById("selected-name") as HTMLParagraphElement;
     const artist = document.getElementById("selected-artist") as HTMLParagraphElement;
+    try {
+        const current_song: Meta = manager.playlist_audio[manager.current_audio_index];
 
-    logo.src = current_song.pictures;
-    name.textContent = current_song.name;
-    artist.textContent = current_song.artist;
+        if (current_song.pictures.length > 0) {
+            logo.src = current_song.pictures;
+        } else {
+            logo.src = "assets/images/playlist_logo.svg"
+        }
+        name.textContent = current_song.name;
+        artist.textContent = current_song.artist;
+    } catch {
+        logo.src = "assets/images/playlist_logo.svg"
+    }
+    console.log(manager.current_audio_index)
+    console.log(logo.src);
     footerToSelected();
 }
 
@@ -538,6 +728,11 @@ async function editPlaylistHandler() {
         errorFabric("Нельзя отредактировать этот плейлист");
         return;
     }
+
+    if (manager.settings.current_space === -1) {
+        errorFabric("Ни одна папка не выбрана");
+        return;
+    }
     manager.setupPage("playlists");
     manager.is_playlist_edit = true;
 
@@ -589,6 +784,18 @@ async function editTagsHandler() {
     const number = document.querySelector("#tag-number") as HTMLInputElement;
     const disk = document.querySelector("#tag-disc-number") as HTMLInputElement;
 
+    filename.value = "";
+    name.value = "";
+    album.value = "";
+    artist.value = "";
+    executor.value = "";
+    composer.value = "";
+    genre.value = "";
+    description.value = "";
+    year.value = "";
+    number.value = "";
+    disk.value = "";
+
     icon.src = "assets/images/playlist_logo.svg";
 
     const list = document.getElementById("tag-audio") as HTMLDivElement;
@@ -635,6 +842,8 @@ async function editTagsHandler() {
         list.append(audio);
 
     }
+
+    setupTheme();
 
 }
 

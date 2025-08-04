@@ -11,6 +11,37 @@ export namespace UTILS {
         songs: string[],
     }
 
+    export interface Theme {
+        name: string,
+        styles:{
+            bg:{
+                color: string,
+                hover: string
+            },
+            aside:{
+                color: string,
+                hover: string
+            },
+            footer:{
+                color: string,
+                hover: string,
+                button: string
+            },
+            text:{
+                font: string,
+                title: string,
+                subtitle: string
+            },
+            buttons:{
+                bg: string,
+                hover: string,
+                active: string,
+                aside_bt:string,
+                aside_bt_hover: string
+            }
+        }
+    }
+
     export interface ISpace {
         name: string,
         path: string,
@@ -21,7 +52,8 @@ export namespace UTILS {
         doctype: string,
         version: string,
         spaces: ISpace[],
-        current_space: number
+        current_space: number,
+        theme: string
     }
 
 
@@ -74,7 +106,8 @@ export namespace CHECK {
                 doctype: "opie/seq",
                 version:"",
                 spaces: [],
-                current_space: -1
+                current_space: -1,
+                theme: "dark"
             }
             fs.writeFileSync(path.join(__dirname, "../../preferences/settings.json"),JSON.stringify(sets));
         }

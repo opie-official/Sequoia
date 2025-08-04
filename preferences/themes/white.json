@@ -1,0 +1,43 @@
+{
+  "name": "white",
+  "styles": {
+    "utils": {
+      "undo": "#C74444",
+      "undo_hover": "#cc5656",
+      "redo": "#46EE4C",
+      "redo_hover": "#5ae45f",
+      "reset": "#E87B32FF",
+      "reset_hover": "e38749"
+    },
+    "main_color": "#E8E8E9",
+    "aside_color": "#E1E0E0",
+    "footer": {
+      "color": "#D2D2D2",
+      "button": "#111111",
+      "hover": "#555555",
+      "active": "#ffffff"
+    },
+    "text": {
+      "font": "",
+      "title": "black",
+      "subtitle": "#333333"
+    },
+    "buttons": {
+      "fill_bg": "#111111",
+      "main_hover": "#C9C9C9",
+      "active": "#BFBFBF",
+      "aside_hover": "#BCBCBC",
+      "fill_hover": "#111111"
+    },
+    "input": {
+      "bg": "transparent",
+      "color": "#111111",
+      "border": "#222222"
+    },
+    "svg": "#000000",
+    "title_bar": {
+      "bg": "#111111"
+    },
+    "range": "#222222"
+  }
+}

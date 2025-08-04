@@ -25,21 +25,27 @@ async function setupFooter() {
 
 
     pause_button.addEventListener("click", () => {
-        const img = pause_button.querySelector("img") as HTMLImageElement;
+        const svg1 = document.getElementById("play-svg") as HTMLElement;
+        const svg2 = document.getElementById("pause-svg") as HTMLElement;
+
+
         if (manager.paused) {
             try {
                 audio.play();
             } catch {
             }
             manager.paused = false;
-            img.src = "assets/images/play.svg";
+            svg1.style.opacity = "1";
+            svg2.style.opacity = "0";
+
         } else {
             try {
                 audio.pause();
             } catch {
             }
             manager.paused = true;
-            img.src = "assets/images/pause.svg";
+            svg1.style.opacity = "0";
+            svg2.style.opacity = "1";
         }
     })
     rewind_prev.addEventListener("click", () => {
@@ -88,8 +94,9 @@ async function setupFooter() {
         await audio.play();
         showCurrentAudio();
     });
-    loop_button.addEventListener("click", () => {
+    loop_button.addEventListener("click", async () => {
         manager.looped = !manager.looped;
+
         if (manager.looped) {
             loop_button.classList.add("clicked");
         } else {
@@ -176,7 +183,7 @@ async function setupFooter() {
         if (event.code === "Space") {
             event.preventDefault()
             const footer = document.querySelector("footer") as HTMLDivElement;
-            if (footer.classList.contains("disabled")){
+            if (footer.classList.contains("disabled")) {
                 return;
             }
             pause_button.click();
@@ -204,7 +211,7 @@ async function createNewSpace() {
     {
         body.id = "custom-prompt";
         p.id = "custom-prompt-p";
-        p.textContent = "Введите название пространства";
+        p.textContent = "Введите название для папки";
         input.id = "custom-prompt-input";
         accept.id = "custom-prompt-accept";
         accept.appendChild(document.createTextNode("Подтвердить"));

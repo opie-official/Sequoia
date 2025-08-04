@@ -5,6 +5,36 @@ interface IPlaylist {
     icon: string,
     songs: string[],
 }
+interface Theme {
+    name: string,
+    styles:{
+        bg:{
+            color: string,
+            hover: string
+        },
+        aside:{
+            color: string,
+            hover: string
+        },
+        footer:{
+            color: string,
+            hover: string,
+            button: string
+        },
+        text:{
+            font: string,
+            title: string,
+            subtitle: string
+        },
+        buttons:{
+            bg: string,
+            hover: string,
+            active: string,
+            aside_bt:string,
+            aside_bt_hover: string
+        }
+    }
+}
 
 interface ISpace {
     name: string,
@@ -16,7 +46,8 @@ interface ISettings {
     doctype: string,
     version: string,
     spaces: ISpace[],
-    current_space: number
+    current_space: number,
+    theme: string
 }
 interface ExtendedMeta {
     name: string,
@@ -35,7 +66,6 @@ interface ExtendedMeta {
     path_to:string
 
 }
-
 
 
 contextBridge.exposeInMainWorld("__API__", {
@@ -80,5 +110,8 @@ contextBridge.exposeInMainWorld("__API__", {
     },
     saveMeta: async (meta: ExtendedMeta)=>{
         return await ipcRenderer.invoke("system:save_meta", meta)
+    },
+    getTheme: async ()=>{
+        return await ipcRenderer.invoke("display:get_theme");
     }
 })

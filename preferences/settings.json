@@ -2,5 +2,6 @@
   "doctype": "opie/seq",
   "version": "1.0.0",
   "spaces": [],
-  "current_space": -1
+  "current_space": -1,
+  "theme": "dark"
 }
