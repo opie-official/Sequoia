@@ -13,7 +13,7 @@ class MainManager {
     new_playlist_audio = [];
     new_playlist_image = "";
     current_playlist_index = 0;
-    current_audio_index = 0;
+    current_audio_index = -1;
     paused = false;
     looped = false;
     randomed = false;
@@ -199,6 +199,7 @@ class UpdateManager {
         this.updateMain_Playlists();
         this.updateMain_Songs();
         this.updateMain_Messages();
+        setupTheme();
     }
     /**
      *
@@ -207,14 +208,30 @@ class UpdateManager {
         const songs_div = document.getElementById("main-songs");
         this.removeChildren("main-songs");
         if (manager.settings.current_space === -1) {
+            const p = document.createElement("p");
+            p.textContent = "Вы не добавили ни одну папку с музыкой";
+            p.classList.add("warn");
+            songs_div.appendChild(p);
             return;
         }
         manager.setCurrentPlaylist();
+        if (manager.playlist_audio.length === 0) {
+            const p = document.createElement("p");
+            p.textContent = "В текущей папке нет музыки";
+            p.classList.add("warn");
+            songs_div.appendChild(p);
+            return;
+        }
         const audio_div = document.getElementById("main-audio");
+        const svg1 = document.getElementById("play-svg");
+        const svg2 = document.getElementById("pause-svg");
         for (let i = 0; i < manager.playlist_audio.length; i++) {
             const index = i;
             const audio = manager.playlist_audio[index];
             const result = audioFabric(index, audio);
+            if (index === manager.current_audio_index) {
+                result.classList.add("toggled");
+            }
             result.addEventListener("click", async () => {
                 manager.current_audio_index = index;
                 const current_audio = manager.playlist_audio[i];
@@ -226,9 +243,8 @@ class UpdateManager {
                 }
                 result.classList.add("toggled");
                 manager.paused = false;
-                const bt = document.getElementById("main-pause");
-                const img = bt.querySelector("img");
-                img.src = "assets/images/play.svg";
+                svg1.style.opacity = "1";
+                svg2.style.opacity = "0";
                 showCurrentAudio();
             });
             songs_div.append(result);
@@ -262,6 +278,7 @@ class UpdateManager {
             });
             playlists_div.append(result);
         }
+        setupTheme();
     }
     /**
      *
@@ -275,7 +292,7 @@ class UpdateManager {
         }
         else {
             p.textContent = "";
-            list.append(document.createTextNode("В текущем пространстве нет ни одной песни"));
+            // list.append(document.createTextNode("В текущей папке нет ни одной песни"));
         }
     }
     /**
@@ -293,6 +310,7 @@ class UpdateManager {
             });
             spaces_div.append(result);
         }
+        setupTheme();
     }
     /**
      *
@@ -321,6 +339,7 @@ class UpdateManager {
             });
             playlist_div.append(result);
         }
+        setupTheme();
     }
 }
 let manager;
@@ -396,6 +415,121 @@ function showCurrentAudio() {
         console.log(e);
     }
 }
+async function setupTheme() {
+    const theme = await manager.api.getTheme();
+    if (!theme[0]) {
+        return;
+    }
+    const obj = JSON.parse(theme[1]);
+    const root = document.documentElement;
+    if (obj.styles.main_color)
+        root.style.setProperty("--main", obj.styles.main_color);
+    if (obj.styles.aside_color)
+        root.style.setProperty("--aside", obj.styles.aside_color);
+    if (obj.styles.footer.color)
+        root.style.setProperty("--footer", obj.styles.footer.color);
+    if (obj.styles.footer.active)
+        root.style.setProperty("--footer-clicked", obj.styles.footer.active);
+    if (obj.styles.text.title)
+        root.style.setProperty("--title", obj.styles.text.title);
+    if (obj.styles.text.subtitle)
+        root.style.setProperty("--sub-title", obj.styles.text.subtitle);
+    if (obj.styles.footer.hover)
+        root.style.setProperty("--footer-hovered", obj.styles.footer.hover);
+    if (obj.styles.footer.button)
+        root.style.setProperty("--footer-color", obj.styles.footer.button);
+    if (obj.styles.input.bg)
+        root.style.setProperty("--input-bg", obj.styles.input.bg);
+    if (obj.styles.input.border)
+        root.style.setProperty("--input-border", obj.styles.input.border);
+    if (obj.styles.input.color)
+        root.style.setProperty("--input-color", obj.styles.input.color);
+    if (obj.styles.title_bar.bg)
+        root.style.setProperty("--title-bar-color", obj.styles.title_bar.bg);
+    if (obj.styles.buttons.main_hover)
+        root.style.setProperty("--main-hover", obj.styles.buttons.main_hover);
+    if (obj.styles.svg)
+        root.style.setProperty("--svg", obj.styles.svg);
+    if (obj.styles.range)
+        root.style.setProperty("--range", obj.styles.range);
+    if (obj.styles.utils.undo)
+        root.style.setProperty("--undo", obj.styles.utils.undo);
+    if (obj.styles.utils.undo_hover)
+        root.style.setProperty("--undo-hover", obj.styles.utils.undo_hover);
+    if (obj.styles.utils.redo)
+        root.style.setProperty("--redo", obj.styles.utils.redo);
+    if (obj.styles.utils.redo_hover)
+        root.style.setProperty("--redo-hover", obj.styles.utils.redo_hover);
+    if (obj.styles.utils.reset)
+        root.style.setProperty("--reset", obj.styles.utils.reset);
+    if (obj.styles.utils.reset_hover)
+        root.style.setProperty("--reset-hover", obj.styles.utils.reset_hover);
+    if (obj.styles.buttons.aside_hover)
+        console.log("hover");
+    root.style.setProperty("--aside-hover", obj.styles.buttons.aside_hover);
+    console.log(obj.styles.buttons.aside_hover);
+    await hoverButtons();
+}
+async function hoverButtons() {
+    const theme = await manager.api.getTheme();
+    const buttons = document.querySelectorAll(".button");
+    console.log(buttons);
+    buttons.forEach((val) => {
+        let aside_color_hover = `#3e4045`;
+        let main_color_hover = `#2a2a2e`;
+        let fill_hover = "white";
+        let fill_base = `#D9D9D9`;
+        if (theme[0]) {
+            const obj = JSON.parse(theme[1]);
+            main_color_hover = obj.styles.buttons.main_hover;
+            aside_color_hover = obj.styles.buttons.aside_hover;
+            fill_base = obj.styles.buttons.fill_bg;
+            fill_hover = obj.styles.buttons.fill_hover;
+        }
+        const value = val;
+        const svg = value.querySelector("svg");
+        value.style.background = "transparent";
+        const path = svg.querySelector("path");
+        path.style.fill = fill_base;
+        path.style.stroke = fill_base;
+        value.addEventListener("mouseenter", () => {
+            if (value.classList.contains("aside")) {
+                value.style.background = aside_color_hover;
+            }
+            else {
+                value.style.background = main_color_hover;
+            }
+            path.style.fill = fill_hover;
+            path.style.stroke = fill_hover;
+        });
+        value.addEventListener("mouseleave", () => {
+            value.style.background = "transparent";
+            path.style.fill = fill_base;
+            path.style.stroke = fill_base;
+        });
+    });
+    if (theme[0]) {
+        const obj = JSON.parse(theme[1]);
+        if (obj.styles.footer) {
+            const bts = document.querySelectorAll(".footer-button");
+            bts.forEach((bt) => {
+                const svg = bt.querySelector("svg");
+                const paths = svg.querySelectorAll("path");
+                paths.forEach((path) => {
+                    path.style.fill = obj.styles.footer.button;
+                    bt.addEventListener("mouseenter", () => {
+                        path.style.fill = obj.styles.footer.hover;
+                        path.style.color = obj.styles.footer.hover;
+                    });
+                    bt.addEventListener("mouseleave", () => {
+                        path.style.fill = obj.styles.footer.button;
+                        path.style.color = obj.styles.footer.button;
+                    });
+                });
+            });
+        }
+    }
+}
 /**
  * Create a space widget
  * @param index {number} an index of space
@@ -409,11 +543,11 @@ function spaceFabric(index, space) {
     const _name = document.createElement("p");
     const _path = document.createElement("p");
     body.classList.add("space-element");
-    _number.classList.add("space-element-number");
+    _number.classList.add("space-element-number", "title");
     _number.appendChild(document.createTextNode(index.toString()));
-    _name.classList.add("space-element-name");
+    _name.classList.add("space-element-name", "title");
     _name.appendChild(document.createTextNode(name));
-    _path.classList.add("space-element-path");
+    _path.classList.add("space-element-path", "title");
     _path.appendChild(document.createTextNode(path));
     body.append(_number, _name, _path);
     return body;
@@ -438,18 +572,18 @@ function playlistsAudioFabric(index, meta) {
     body.classList.add("playlist-body");
     checkbox.type = "checkbox";
     checkbox.classList.add("playlist-body-checkbox");
-    index_.classList.add("playlist-body-index");
+    index_.classList.add("playlist-body-index", "title");
     index_.textContent = cutText(index.toString(), 15);
     div.classList.add("playlist-body-pic-out");
     img.src = meta.pictures ? meta.pictures : "assets/images/playlist_logo.svg";
     div.append(img);
-    name.classList.add("playlist-body-name");
+    name.classList.add("playlist-body-name", "title");
     name.textContent = cutText(`${meta.name}`, 15);
-    artist.classList.add("playlist-body-artist");
+    artist.classList.add("playlist-body-artist", "title");
     artist.textContent = cutText(`${meta.artist}`, 15);
-    album.classList.add("playlist-body-album");
+    album.classList.add("playlist-body-album", "title");
     album.textContent = cutText(`${meta.album}`, 15);
-    duration.classList.add("playlist-body-duration");
+    duration.classList.add("playlist-body-duration", "title");
     duration.textContent = cutText(secondsToTime(meta.duration), 15);
     group.classList.add("playlist-body-group");
     group.append(checkbox, index_, div, name, artist, album);
@@ -484,9 +618,9 @@ function playlistOnMainFabric(meta, is_main = false) {
     }
     body.classList.add("main-playlist-body");
     div.classList.add("main-playlist-body-pic-out");
-    name.classList.add("main-playlist-name");
+    name.classList.add("main-playlist-name", "title");
     name.textContent = meta.name;
-    amount.classList.add("main-playlist-amount");
+    amount.classList.add("main-playlist-amount", "sub-title");
     if (is_main || meta.name === "__global__") {
         name.textContent = "Все песни";
         amount.textContent = manager.all_audio.length.toString() + " аудио";
@@ -508,7 +642,7 @@ function audioFabric(index, meta) {
     const body = document.createElement("div");
     body.classList.add("main-song");
     const num = document.createElement("p");
-    num.classList.add("main-song-number");
+    num.classList.add("main-song-number", "title");
     num.appendChild(document.createTextNode(`${index + 1}`));
     const pic_outer = document.createElement("div");
     pic_outer.classList.add("main-song-image-out");
@@ -522,16 +656,16 @@ function audioFabric(index, meta) {
     }
     pic_outer.appendChild(img);
     const name = document.createElement("p");
-    name.classList.add("main-song-name");
-    name.textContent = cutText(meta.name, 20);
+    name.classList.add("main-song-name", "title");
+    name.textContent = meta.name;
     const artist = document.createElement("p");
-    artist.classList.add("main-song-artist");
-    artist.appendChild(document.createTextNode(meta.artist));
+    artist.classList.add("main-song-artist", "title");
+    artist.textContent = meta.artist;
     const album = document.createElement("p");
-    album.classList.add("main-song-album");
-    album.appendChild(document.createTextNode(meta.album));
+    album.classList.add("main-song-album", "title");
+    album.textContent = meta.album;
     const duration = document.createElement("p");
-    duration.classList.add("main-song-duration");
+    duration.classList.add("main-song-duration", "title");
     duration.textContent = secondsToTime(meta.duration ?? 0);
     const group = document.createElement("div");
     group.classList.add("main-song-group");

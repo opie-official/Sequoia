@@ -25,7 +25,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     await setupAudio();
 
     await setupFooter();
+    await setupTheme();
     bindButtons();
-    await mainHandler(true);
+    await mainHandler();
 })
 

@@ -23,11 +23,11 @@
 }
 
 #selected-undo{
-    background: var(--red);
+    background: var(--undo);
     border-radius: 100px;
     border: 0 solid;
     &:hover{
-        background: #cc5656;
+        background: var(--undo-hover);
     }
 }
 
@@ -39,13 +39,13 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    &:hover{
-        filter: brightness(2);
-    }
+    /*&:hover{*/
+    /*    filter: brightness(2);*/
+    /*}*/
 }
 
-#selected-edit-tags>img{
-    width: 100%;
+#selected-edit-tags>svg{
+    width: 70%;
 }
 #selected-main{
     width: 100%;
@@ -73,14 +73,16 @@
     justify-content: center;
     overflow: hidden;
     transition: all 0.5s;
-    &:hover{
-        filter: brightness(1.5);
-    }
+    /*&:hover{*/
+    /*    filter: brightness(1.5);*/
+    /*}*/
 }
-#equalizer > img{
+#equalizer > svg{
     width: 100%;
 }
-
+#equalizer > svg>path{
+    fill: var(--footer-color);
+}
 
 #selected-logo{
     aspect-ratio: 1/1;
@@ -104,13 +106,13 @@
 
 #selected-name{
     font-size: 20pt;
-    color: white;
+    color: var(--title);
     text-align: center;
 }
 
 #selected-artist{
     font-size: 13pt;
-    color: #D9D9D9;
+    color: var(--sub-title);
     text-align: center;
 }
 
@@ -171,13 +173,13 @@
 }
 
 #selected-label-name {
-    color: white;
+    color: var(--title);
     font-size: 10pt;
     overflow: hidden;
 }
 
 #selected-label-author {
-    color: #BABABA;
+    color: var(--sub-title);
     font-size: 7pt;
     overflow: hidden;
 }
@@ -218,7 +220,7 @@
     }
 }
 
-.selected-main-button > img {
+.selected-main-button > svg {
     width: 100%;
 }
 
@@ -231,7 +233,7 @@
 }
 
 #selected-footer-duration-value {
-    color: #BABABA;
+    color: var(--sub-title);
     font-size: 15pt;
     position: absolute;
     left: 0;
@@ -240,7 +242,7 @@
 
 #selected-duration {
     position: absolute;
-    background: white;
+    background: var(--title);
     border: 0 solid;
     outline: none;
     width: 90%;
@@ -288,12 +290,12 @@
     align-items: center;
     transition: all 0.5s;
 
-    &:hover {
-        filter: brightness(1.5);
-    }
+    /*&:hover {*/
+    /*    filter: brightness(1.5);*/
+    /*}*/
 }
 
-.selected-other-button > img {
+.selected-other-button > svg {
     width: 100%;
 }
 
@@ -306,14 +308,14 @@
 }
 
 #selected-volume-value {
-    color: #BABABA;
+    color: var(--sub-title);
     font-size: 15pt;
     position: absolute;
     left: 1%;
 }
 
 #selected-volume {
-    background: #BABABA;
+    background: var(--sub-title);
     border: 0 solid;
     outline: none;
     width: 55%;

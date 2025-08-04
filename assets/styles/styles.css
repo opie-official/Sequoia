@@ -1,9 +1,37 @@
 :root {
     --red: #C74444;
+    --undo: #C74444;
     --main: #19191B;
+    --main-hover: #FFFFFF19;
     --aside: #232427;
+    --aside-hover: #FFFFFF33;
     --footer: #2A2B2D;
-    --orange: rgb(232,123,50);
+    --orange: rgb(232, 123, 50);
+    --reset: #E87B32FF;
+    --reset-hover: #e38749;
+    --footer-clicked: white;
+    --footer-color: #878787;
+    --footer-hovered: #BABABA;
+
+    --title: white;
+    --sub-title: #d9d9d9;
+    --input-bg: black;
+    --input-color: white;
+    --input-border: white;
+
+    --redo: #46EE4C;
+    --redo-hover: #5ae45f;
+    --red-hover: #cc5656;
+    --undo-hover: #cc5656;
+
+    --sub-subtitle: #BABABA;
+
+    --icon: #C8C8C8FF;
+
+    --svg: #d9d9d9;
+
+    --title-bar-color: #d9d9d9;
+    --range: #999999
 }
 
 * {
@@ -28,15 +56,16 @@ html, body {
 }
 
 .toggled {
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: var(--main-hover) !important;
 }
 
-.clicked {
-    filter: brightness(2) !important;
+.clicked>svg>path {
+    fill: var(--footer-clicked) !important;
+    stroke: var(--footer-clicked) !important;
 }
 
 .toggled-playlist {
-    background: rgba(255, 255, 255, 0.2) !important;
+    background: var(--aside-hover) !important;
 }
 
 .enabled {
@@ -70,11 +99,20 @@ html, body {
     border: 0 solid;
 
     &:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--main-hover);
     }
 }
 
-#title-close > img {
+.title-bar-button > svg > path {
+    stroke: var(--title-bar-color);
+    /*fill: var(--title-bar-color)*/
+}
+
+.title-bar-button > svg > rect {
+    stroke: var(--title-bar-color);
+}
+
+#title-close > svg {
     width: 25% !important;
     object-fit: none !important;
 }
@@ -83,7 +121,7 @@ html, body {
     background: #D53232;
 }
 
-.title-bar-button > img {
+.title-bar-button > svg {
     width: 40%;
     cursor: pointer;
 }
@@ -143,14 +181,12 @@ html, body {
 }
 
 
-
-
-#equalizer-body{
+#equalizer-body {
     position: absolute;
     top: 10%;
     left: 10%;
     width: 80%;
-    height:80%;
+    height: 80%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -161,7 +197,7 @@ html, body {
 }
 
 
-#equalizer-buttons{
+#equalizer-buttons {
     position: absolute;
     top: 2%;
     left: 0.5%;
@@ -174,30 +210,32 @@ html, body {
 }
 
 
-#equalizer-undo{
-    background: var(--red);
+#equalizer-undo {
+    background: var(--undo);
     border-radius: 100px;
     border: 0 solid;
     height: 100%;
     aspect-ratio: 1/1;
-    &:hover{
-        background: #cc5656;
+
+    &:hover {
+        background: var(--undo-hover);
     }
 }
 
 
-#equalizer-reset{
-    background: var(--orange);
+#equalizer-reset {
+    background: var(--reset);
     border-radius: 100px;
     border: 0 solid;
     height: 100%;
     aspect-ratio: 1/1;
-    &:hover{
-        background: #e38749;
+
+    &:hover {
+        background: var(--reset-hover);
     }
 }
 
-#equalizer-list{
+#equalizer-list {
     width: 100%;
     height: 90%;
     position: absolute;
@@ -208,7 +246,8 @@ html, body {
     justify-content: center;
     gap: 2%;
 }
-.equalizer-option-body{
+
+.equalizer-option-body {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -221,24 +260,69 @@ html, body {
 .equalizer-option-value {
     margin: 5px 0;
     text-align: center;
-    color: white;
+    color: var(--title);
     font-size: 15pt;
 }
-.equalizer-option{
+
+.equalizer-option {
     writing-mode: vertical-lr !important;
     -webkit-appearance: none;
     width: 5% !important;
-    height: 90%!important;
+    height: 90% !important;
     direction: rtl;
-
 }
+
 .equalizer-option::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 30px;
     height: 10px;
-    background: white !important;
+    background: var(--title) !important;
     cursor: pointer;
     border-radius: 3px;
     margin-top: -5px;
 }
+
+
+.entering {
+    outline: 2px solid #3a7ecc;
+}
+
+
+.button {
+    border-radius: 100%;
+}
+
+.button > svg {
+    max-width: 80%;
+}
+
+
+hr {
+    z-index: 30;
+    height: 100%;
+    position: absolute;
+    background-color: #3a7ecc;
+    border: none;
+    width: 3px;
+}
+
+.svg
+{
+    color: var(--svg);
+}
+.svg path{
+    fill: currentColor;
+
+    stroke: var(--svg) !important;
+}
+
+
+.warn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+

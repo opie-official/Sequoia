@@ -41,6 +41,7 @@ const spaces = __importStar(require("./spaces"));
 const utils_1 = require("./utils");
 var getAllSpaces = utils_1.UTILS.getAllSpaces;
 const metadata_1 = require("./metadata");
+const themes_1 = require("./themes");
 let __window_maximized__ = false;
 let win;
 let startWindow;
@@ -180,6 +181,7 @@ electron_1.ipcMain.handle("system:meta", (e, path) => {
 electron_1.ipcMain.handle("system:save_meta", (e, meta) => {
     return (0, metadata_1.saveMetaMP3)(meta);
 });
+electron_1.ipcMain.handle("display:get_theme", themes_1.importTheme);
 /**
  *
  */

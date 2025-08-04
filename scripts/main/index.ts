@@ -6,7 +6,7 @@ import * as spaces from "./spaces"
 import {CHECK, UTILS} from "./utils";
 import getAllSpaces = UTILS.getAllSpaces;
 import {parseFiles, readMetaMP3, ExtendedMeta, saveMetaMP3} from "./metadata";
-
+import {importTheme} from "./themes"
 let __window_maximized__ = false;
 
 let win: BrowserWindow;
@@ -158,7 +158,7 @@ ipcMain.handle("system:meta", (e: IpcMainInvokeEvent, path: string) => {
 ipcMain.handle("system:save_meta", (e: IpcMainInvokeEvent, meta: ExtendedMeta) => {
     return saveMetaMP3(meta);
 })
-
+ipcMain.handle("display:get_theme", importTheme);
 /**
  *
  */

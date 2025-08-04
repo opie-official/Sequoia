@@ -22,11 +22,11 @@
     height: 100%;
     aspect-ratio: 1/1;
     border-radius: 100px;
-    background: #EE4646;
+    background: var(--undo);
     border: 0 solid;
 
     &:hover {
-        background: #FF6666;
+        background: var(--undo-hover);
     }
 }
 
@@ -34,11 +34,11 @@
     height: 100%;
     aspect-ratio: 1/1;
     border-radius: 100px;
-    background: #46EE4C;
+    background: var(--redo);
     border: 0 solid;
 
     &:hover {
-        background: #8BFF82;
+        background: var(--redo-hover);
     }
 }
 
@@ -77,7 +77,7 @@
     align-items: center;
     flex-direction: column;
     text-align: center;
-    color: white;
+    color: var(--title);
     font-size: 20pt;
 }
 
@@ -110,7 +110,7 @@
     align-items: center;
 }
 
-#space-new > img {
+#space-new > svg {
     width: 90%;
 }
 
@@ -125,7 +125,7 @@
     align-items: center;
 }
 
-#space-delete > img {
+#space-delete > svg {
     width: 90%;
 }
 
@@ -146,10 +146,10 @@
     gap: 5%;
     overflow: hidden;
     background: transparent;
-    color: white;
+    color: var(--title);
 
     &:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: var(--main-hover);
     }
 }
 
@@ -166,23 +166,23 @@
     width: 50%;
     height: 50%;
     background: var(--main);
-    border: 2px solid #BABABA;
+    border: 2px solid var(--sub-subtitle);
     border-radius: 30px;
     gap: 20%;
 }
 
 #custom-prompt-p {
     font-size: 20pt;
-    color: white;
+    color: var(--title);
 }
 
 #custom-prompt-input {
-    background: black;
-    color: white;
+    background: var(--input-bg);
+    color: var(--input-color);
     font-size: 30pt;
     width: 80%;
     height: 10%;
-    border: 0 solid;
+    border: 2px solid var(--input-border);
 
 }
 
@@ -201,11 +201,11 @@
     height: 90%;
     border-radius: 20px;
     font-size: 20pt;
-    border: 2px solid #BABABA;
+    border: 2px solid var(--sub-subtitle);
     background: var(--main);
-    color: white;
+    color: var(--title);
     &:hover{
-        background: rgba(255,255,255,0.1);
+        background: var(--main-hover);
     }
 }
 
@@ -215,7 +215,7 @@
 
 
 #space-description{
-    color: #D9D9D9;
+    color: var(--sub-title);
     font-size: 17pt;
 }
 #space-main{

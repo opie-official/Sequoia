@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     resizeButton.addEventListener("click", manager.api.resizeWindow);
     await setupAudio();
     await setupFooter();
+    await setupTheme();
     bindButtons();
-    await mainHandler(true);
+    await mainHandler();
 });
