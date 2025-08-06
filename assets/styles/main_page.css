@@ -135,13 +135,12 @@
 }
 
 #main-settings {
-    visibility: hidden;
-    width: 10%;
+    height: 4%;
     aspect-ratio: 1/1;
-    background: transparent;
-    position: relative;
+    /*background: transparent;*/
+    position: absolute;
     left: 5%;
-    top: 5%;
+    top: 83%;
     border: 0 solid;
     display: flex;
     flex-direction: column;
@@ -149,13 +148,17 @@
     align-items: center;
     transition: all 0.3s;
 
-    &:hover {
-        filter: brightness(1.5);
-    }
+
 }
 
-#main-settings img {
+#main-settings >svg {
     width: 100%;
+    aspect-ratio: 1/1;
+}
+
+#main-settings> svg>path{
+    fill: var(--svg);
+    stroke: var(--svg);
 }
 
 #main-spaces {

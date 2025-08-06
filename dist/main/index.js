@@ -42,16 +42,14 @@ const utils_1 = require("./utils");
 var getAllSpaces = utils_1.UTILS.getAllSpaces;
 const metadata_1 = require("./metadata");
 const themes_1 = require("./themes");
+var getSettings = utils_1.UTILS.getSettings;
 let __window_maximized__ = false;
 let win;
 let startWindow;
-/**
- *
- */
 var FABRICS;
 (function (FABRICS) {
     /**
-     *
+     * Creates a main window
      */
     function createWindow() {
         const Screen = electron_1.screen.getPrimaryDisplay();
@@ -75,7 +73,7 @@ var FABRICS;
     }
     FABRICS.createWindow = createWindow;
     /**
-     *
+     * Creates a start window
      */
     function createStartWindow() {
         const Screen = electron_1.screen.getPrimaryDisplay();
@@ -124,6 +122,9 @@ electron_1.ipcMain.on("system:wrap", () => {
         win_.minimize();
     }
 });
+electron_1.ipcMain.on("system:settings_update", (_, settings) => {
+    utils.UTILS.saveSettings(settings);
+});
 electron_1.ipcMain.handle("system:all_spaces", () => {
     return utils.UTILS.getAllSpaces();
 });
@@ -131,7 +132,7 @@ electron_1.ipcMain.handle("system:settings", () => {
     const res = utils.UTILS.getSettings();
     return res;
 });
-electron_1.ipcMain.handle("system:space", (e, name) => {
+electron_1.ipcMain.handle("system:space", (_, name) => {
     const spaces = getAllSpaces();
     return spaces.filter((elem) => {
         return elem.name === name;
@@ -140,14 +141,11 @@ electron_1.ipcMain.handle("system:space", (e, name) => {
 electron_1.ipcMain.handle("system:space_path", async () => {
     return await spaces.getDirectoryOfSpace();
 });
-electron_1.ipcMain.handle("system:space_make", (e, name, path) => {
+electron_1.ipcMain.handle("system:space_make", (_, name, path) => {
     utils.UTILS.createSpace(name, path);
     return utils.UTILS.getAllSpaces();
 });
-electron_1.ipcMain.on("system:settings_update", (e, settings) => {
-    utils.UTILS.saveSettings(settings);
-});
-electron_1.ipcMain.handle("system:music_meta", async (e, path_) => {
+electron_1.ipcMain.handle("system:music_meta", async (_, path_) => {
     return (0, metadata_1.parseFiles)(path_);
 });
 electron_1.ipcMain.handle("system:playlist_image", async () => {
@@ -175,36 +173,43 @@ electron_1.ipcMain.handle("system:playlist_image", async () => {
     const result = `data:image/${ext};base64,${base}`;
     return [true, result];
 });
-electron_1.ipcMain.handle("system:meta", (e, path) => {
+electron_1.ipcMain.handle("system:meta", (_, path) => {
     return (0, metadata_1.readMetaMP3)(path);
 });
-electron_1.ipcMain.handle("system:save_meta", (e, meta) => {
+electron_1.ipcMain.handle("system:save_meta", (_, meta) => {
     return (0, metadata_1.saveMetaMP3)(meta);
 });
 electron_1.ipcMain.handle("display:get_theme", themes_1.importTheme);
-/**
- *
- */
+electron_1.ipcMain.handle("display:get_themes", themes_1.getThemes);
 electron_1.app.whenReady().then(() => {
     utils_1.CHECK.startCheck();
     const ffmpeg_res = utils_1.CHECK.checkFFMPEG();
-    FABRICS.createStartWindow();
-    FABRICS.createWindow();
+    const settings = getSettings();
+    if (settings.show_start_page) {
+        FABRICS.createStartWindow();
+        FABRICS.createWindow();
+        startWindow.once('ready-to-show', () => {
+            startWindow.show();
+            setTimeout(() => {
+                startWindow.close();
+            }, 2300);
+        });
+        startWindow.on("closed", () => {
+            win.show();
+        });
+    }
+    else {
+        FABRICS.createWindow();
+        win.once("ready-to-show", () => {
+            win.show();
+        });
+    }
     if (!ffmpeg_res) {
         electron_1.dialog.showMessageBox(win, {
             "message": "У вас не установлен FFMPEG. Вы не сможете редактировать теги аудио-файлов",
             type: "warning"
-        });
+        }).then();
     }
-    startWindow.once('ready-to-show', () => {
-        startWindow.show();
-        setTimeout(() => {
-            startWindow.close();
-        }, 2300);
-    });
-    startWindow.on("closed", () => {
-        win.show();
-    });
 });
 electron_1.app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {

@@ -43,6 +43,10 @@ const path = __importStar(require("path"));
 const ff = __importStar(require("ffmetadata"));
 const fs = __importStar(require("node:fs"));
 const utils_1 = require("./utils");
+/**
+ * Reads the metadata for further listening
+ * @param path_ path to dir with audio
+ */
 async function parseFiles(path_) {
     const files = await (0, promises_1.readdir)(path_);
     const result = [];
@@ -74,73 +78,16 @@ async function parseFiles(path_) {
     }
     return result;
 }
-// for (const file of files) {
-//     if (path.extname(file) !== ".mp3") {
-//         console.log(`continue :: ${path.extname(file)}`)
-//         continue;
-//     }
-//     const path_to = path.join(path_, file);
-//     // ff.read(path_to, (err: any, data: any) => {
-//     //     if (err){
-//     //         return;
-//     //     }
-//     //     const meta = {
-//     //         name: data.title,
-//     //         filename: file,
-//     //         description: data.description | data.lyrics,
-//     //         icon: "",
-//     //         album: data.album,
-//     //         artist: data.artist,
-//     //         executor: data.performer,
-//     //         composer: data.composer,
-//     //         genre: data.genre,
-//     //         year: data.date,
-//     //         number: data.track,
-//     //         disc_number: data.disc
-//     //     }
-//     //
-//     //
-//     // })
-//
-//     const tags: Tags = id3.read(path_to);
-//     console.log(`${file} ::: ${tags}`)
-//     const meta: ExtendedMeta = {
-//         filename: file,
-//         name: tags.title ?? "",
-//         description: tags.comment ? tags.comment.text : "",
-//         album: tags.album ?? "",
-//         artist: tags.artist ?? "",
-//         executor: "",
-//         composer: tags.composer ?? "",
-//         year: tags.year ?? "",
-//         number: tags.trackNumber ?? "0",
-//         disk_number: tags.partOfSet ?? "",
-//         //@ts-ignore
-//         icon: tags.image ? tags.image.imageBuffer.toString("base64") : "",
-//         genre: tags.genre ?? ""
-//     }
-//
-//     result.push(meta)
-// }
+/**
+ * Reads the metadata for further editing
+ * @param path_ path to dir with audio
+ */
 async function readMetaMP3(path_) {
     const files = await (0, promises_1.readdir)(path_);
     const result = [];
     for (const file of files) {
         try {
             const path_to = path.join(path_, file);
-            //
-            // ff.read(path_to, {coverPath: path.join(__dirname, "../../preferences/cover.png")}, (err: any, data: any) => {
-            //     if (err) {
-            //         console.log("returned", err)
-            //         return;
-            //     }
-            //     let icon =""
-            //     fs.readFile(path.join(__dirname, "../../preferences/cover.png"), (err, data: any) => {
-            //         if (err) {
-            //             console.log("returned2", err)
-            //         }
-            //         icon = data.toString("base64");
-            //     })
             const data = await (0, music_metadata_1.parseFile)(path_to);
             const icons = data.common.picture;
             let icon = "";
@@ -179,6 +126,10 @@ async function readMetaMP3(path_) {
     }
     return result;
 }
+/**
+ * Saves new metadata
+ * @param meta obj with new meta
+ */
 function saveMetaMP3(meta) {
     const res = utils_1.CHECK.checkFFMPEG();
     if (!res) {

@@ -126,7 +126,6 @@ html, body {
     cursor: pointer;
 }
 
-
 #root {
     width: 100%;
     height: 100%;
@@ -143,20 +142,69 @@ html, body {
     height: 15%;
     top: -30%;
     left: 25%;
-    background: linear-gradient(45deg, rgba(227, 71, 71, 0.5), rgba(115, 31, 31, 0.5));
+    background: linear-gradient(45deg, rgba(205, 55, 55, 0.7), rgba(115, 31, 31, 0.7));
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     overflow: hidden;
     animation: error-anima 3s;
-    outline: 5px solid #ec5959;
-    border-radius: 30px;
+    outline: 2px solid #ec5959;
+    border-radius: 5px;
 
 }
 
 .error-p {
     color: white;
+    font-size: 20pt;
+}
+
+
+.warning {
+    position: absolute;
+    z-index: 30;
+    width: 50%;
+    height: 15%;
+    top: -30%;
+    left: 25%;
+    background: linear-gradient(45deg, rgba(223, 196, 62, 0.7), rgba(211, 182, 31, 0.7));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+    animation: error-anima 3s;
+    outline: 2px solid #e7ec59;
+    border-radius: 5px;
+
+}
+
+.warning-p {
+    color: black;
+    font-size: 20pt;
+}
+
+.complete {
+    position: absolute;
+    z-index: 30;
+    width: 50%;
+    height: 15%;
+    top: -30%;
+    left: 25%;
+    background: linear-gradient(45deg, rgba(76, 170, 64, 0.7), rgba(44, 159, 32, 0.7));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+    animation: error-anima 3s;
+    outline: 2px solid #6dec59;
+    border-radius: 5px;
+
+}
+
+.complete-p {
+    color: #ffffff;
     font-size: 20pt;
 }
 

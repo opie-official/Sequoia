@@ -1,71 +1,6 @@
 import {contextBridge, ipcRenderer} from "electron"
-
-interface IPlaylist {
-    name: string,
-    icon: string,
-    songs: string[],
-}
-interface Theme {
-    name: string,
-    styles:{
-        bg:{
-            color: string,
-            hover: string
-        },
-        aside:{
-            color: string,
-            hover: string
-        },
-        footer:{
-            color: string,
-            hover: string,
-            button: string
-        },
-        text:{
-            font: string,
-            title: string,
-            subtitle: string
-        },
-        buttons:{
-            bg: string,
-            hover: string,
-            active: string,
-            aside_bt:string,
-            aside_bt_hover: string
-        }
-    }
-}
-
-interface ISpace {
-    name: string,
-    path: string,
-    playlists: IPlaylist[]
-}
-
-interface ISettings {
-    doctype: string,
-    version: string,
-    spaces: ISpace[],
-    current_space: number,
-    theme: string
-}
-interface ExtendedMeta {
-    name: string,
-    filename: string,
-    description: string,
-    icon: string,
-    album: string,
-    artist: string,
-    executor: string,
-    composer: string,
-    genre: string,
-    year: string,
-    number: string,
-    disk_number: string,
-    filepath: string,
-    path_to:string
-
-}
+import {UTILS} from "./utils"
+import {ExtendedMeta} from "./metadata"
 
 
 contextBridge.exposeInMainWorld("__API__", {
@@ -78,25 +13,22 @@ contextBridge.exposeInMainWorld("__API__", {
     wrapWindow: () => {
         ipcRenderer.send("system:wrap")
     },
-    // getPage: async (page: string): Promise<[boolean, string]> => {
-    //     return await ipcRenderer.invoke("display:page", page);
-    // },
-    getAllSpaces: async (): Promise<ISpace[]> => {
+    getAllSpaces: async () => {
         return await ipcRenderer.invoke("system:all_spaces");
     },
-    getSettings: async (): Promise<ISettings> => {
+    getSettings: async () => {
         return await ipcRenderer.invoke("system:settings")
     },
-    updateSettings: (settings: ISettings) => {
+    updateSettings: (settings: UTILS.ISettings) => {
         ipcRenderer.send("system:settings_update", settings)
     },
-    getSpace: async (name: string): Promise<ISpace> => {
+    getSpace: async (name: string) => {
         return await ipcRenderer.invoke("system:space", name);
     },
-    getSpacePath: async (): Promise<[boolean, string]> => {
+    getSpacePath: async () => {
         return await ipcRenderer.invoke("system:space_path");
     },
-    makeSpace: async (name: string, path: string): Promise<ISpace[]> => {
+    makeSpace: async (name: string, path: string) => {
         return await ipcRenderer.invoke("system:space_make", name, path);
     },
     getMusicMeta: async (path: string) => {
@@ -113,5 +45,8 @@ contextBridge.exposeInMainWorld("__API__", {
     },
     getTheme: async ()=>{
         return await ipcRenderer.invoke("display:get_theme");
+    },
+    getThemes: async()=>{
+        return await ipcRenderer.invoke("display:get_themes");
     }
 })

@@ -18,7 +18,8 @@ interface ISettings {
     version: string,
     spaces: ISpace[],
     current_space: number,
-    theme: string
+    theme: string,
+    show_start_page: boolean
 }
 
 export interface ExtendedMeta {
@@ -55,33 +56,8 @@ declare global {
             getPlaylistImage: () => Promise<[boolean, string]>,
             getExtendedMeta: (path: string) => Promise<ExtendedMeta[]>,
             saveMeta: (meta: ExtendedMeta) => Promise<boolean>,
-            getTheme: ()=>Promise<[boolean, string]>
+            getTheme: ()=>Promise<[boolean, string]>,
+            getThemes: ()=>Promise<[boolean, string[]]>
         }
     }
 }
-
-// declare module 'node-id3' {
-//     export interface Tags {
-//         title?: string;
-//         artist?: string;
-//         album?: string;
-//         year?: string;
-//         comment?: { language?: string; shortText?: string } | string;
-//         trackNumber?: string;
-//         partOfSet?: string;
-//         composer?: string;
-//         image?: string | Buffer | {
-//             mime: string;
-//             type: { id: number; name: string };
-//             description?: string;
-//             imageBuffer: Buffer
-//         };
-//         // ... добавьте нужные поля
-//     }
-//
-//     export function read(filePath: string): Tags | null;
-//
-//     export function write(tags: Tags, filePath: string, callback?: (error?: Error) => void): void;
-//
-//     export function update(tags: Tags, filePath: string, callback?: (error?: Error) => void): void;
-// }
