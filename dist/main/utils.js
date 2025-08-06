@@ -38,10 +38,18 @@ const fs = __importStar(require("fs"));
 const path = __importStar(require("node:path"));
 var UTILS;
 (function (UTILS) {
+    /**
+     * Reads a settings.json file and parse it into ISettings object
+     */
     function getSettings() {
         return JSON.parse(fs.readFileSync(path.join(__dirname, "../../preferences/settings.json"), "utf-8"));
     }
     UTILS.getSettings = getSettings;
+    /**
+     * Creates a new space
+     * @param name a name of new space
+     * @param path a path to dir of new space
+     */
     function createSpace(name, path) {
         const space = {
             name,
@@ -53,24 +61,28 @@ var UTILS;
         saveSettings(settings);
     }
     UTILS.createSpace = createSpace;
+    /**
+     * Save settings to settings.json file
+     * @param settings a settings object
+     */
     function saveSettings(settings) {
         fs.writeFileSync(path.join(__dirname, "../../preferences/settings.json"), JSON.stringify(settings));
     }
     UTILS.saveSettings = saveSettings;
+    /**
+     * get all space from settings.json
+     */
     function getAllSpaces() {
         const settings = getSettings();
         return settings.spaces;
     }
     UTILS.getAllSpaces = getAllSpaces;
-    function checkSpaces() {
-        const settings = getSettings();
-        const spaces = settings.spaces;
-        return spaces.length >= 1;
-    }
-    UTILS.checkSpaces = checkSpaces;
 })(UTILS || (exports.UTILS = UTILS = {}));
 var CHECK;
 (function (CHECK) {
+    /**
+     * Checks files for integrity
+     */
     function startCheck() {
         const settings = checkSettings();
         if (!settings) {
@@ -79,15 +91,23 @@ var CHECK;
                 version: "",
                 spaces: [],
                 current_space: -1,
-                theme: "dark"
+                theme: "dark",
+                show_start_page: true
             };
             fs.writeFileSync(path.join(__dirname, "../../preferences/settings.json"), JSON.stringify(sets));
         }
     }
     CHECK.startCheck = startCheck;
+    /**
+     * Check settings.json for integrity
+     * @private
+     */
     function checkSettings() {
         return fs.existsSync(path.join(__dirname, "../../preferences/settings.json"));
     }
+    /**
+     * Check FFMPEG for availability
+     */
     function checkFFMPEG() {
         const path_env = process.env.Path || process.env.PATH;
         const dirs = path_env.split(path.delimiter);

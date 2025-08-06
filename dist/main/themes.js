@@ -34,13 +34,24 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.importTheme = importTheme;
+exports.getThemes = getThemes;
 const fs = __importStar(require("fs"));
 const utils_1 = require("./utils");
+const path = __importStar(require("path"));
 function importTheme() {
     const settings = utils_1.UTILS.getSettings();
     if (!settings.theme) {
         return [false, ""];
     }
-    const text = fs.readFileSync(`preferences/themes/${settings.theme.replace(".json", "")}.json`, 'utf-8');
+    const text = fs.readFileSync(path.join(__dirname, `../../preferences/themes/${settings.theme.replace(".json", "")}.json`), 'utf-8');
     return [true, text];
+}
+function getThemes() {
+    try {
+        const files = fs.readdirSync(path.join(__dirname, `../../preferences/themes`));
+        return [true, files];
+    }
+    catch {
+        return [false, []];
+    }
 }

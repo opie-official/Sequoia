@@ -1,5 +1,8 @@
 "use strict";
-// type render_mode = "name" | "album" | "artist";
+/**
+ * @file utils
+ * @author OPIE
+ */
 /**
  * @class MainManager
  * A class of app manager that responsible for keep settings and api and their update
@@ -174,12 +177,12 @@ class MainManager {
 }
 /**
  * @class UpdateManager
- * a class that responsible to updating parts of interface
+ * A class that responsible to updating parts of interface
  */
 class UpdateManager {
     /**
-     *
-     * @param id
+     * Remove all children from widget
+     * @param id  id of widget
      */
     static removeChildren(id) {
         try {
@@ -192,17 +195,15 @@ class UpdateManager {
         }
     }
     /**
-     *
+     * Update content on #main-page
      */
     static updateMain() {
-        console.log("update main");
         this.updateMain_Playlists();
         this.updateMain_Songs();
-        this.updateMain_Messages();
-        setupTheme();
+        this.updateMain_Space();
     }
     /**
-     *
+     * Update an audio list on #main-page
      */
     static updateMain_Songs() {
         const songs_div = document.getElementById("main-songs");
@@ -245,13 +246,13 @@ class UpdateManager {
                 manager.paused = false;
                 svg1.style.opacity = "1";
                 svg2.style.opacity = "0";
-                showCurrentAudio();
+                this.updateMain_CurrentAudio();
             });
             songs_div.append(result);
         }
     }
     /**
-     *
+     * Update a playlists list on #main-page
      */
     static updateMain_Playlists() {
         const playlists_div = document.getElementById("main-aside-playlists");
@@ -278,25 +279,43 @@ class UpdateManager {
             });
             playlists_div.append(result);
         }
-        setupTheme();
     }
     /**
-     *
+     * Update a space-name on #main-page
      */
-    static updateMain_Messages() {
+    static updateMain_Space() {
         const p = document.getElementById("main-spaces-name");
-        const list = document.getElementById("main-songs");
         if (manager.settings.current_space !== -1) {
             const space = manager.getCurrentSpace();
             p.textContent = space.name;
         }
         else {
             p.textContent = "";
-            // list.append(document.createTextNode("В текущей папке нет ни одной песни"));
         }
     }
     /**
-     *
+     * Update a current audio info on #main-page
+     */
+    static updateMain_CurrentAudio() {
+        try {
+            const name = document.getElementById("label-name");
+            const author = document.getElementById("label-author");
+            const img = document.getElementById("footer-current-icon");
+            if (manager.playlist_audio[manager.current_audio_index].pictures) {
+                img.src = manager.playlist_audio[manager.current_audio_index].pictures;
+            }
+            else {
+                img.src = "assets/images/playlist_logo.svg";
+            }
+            name.textContent = manager.playlist_audio[manager.current_audio_index].name;
+            author.textContent = manager.playlist_audio[manager.current_audio_index].artist;
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+    /**
+     * Update a list of spaces on #spaces
      */
     static updateSpaces() {
         const spaces_div = document.getElementById("space-list");
@@ -310,10 +329,9 @@ class UpdateManager {
             });
             spaces_div.append(result);
         }
-        setupTheme();
     }
     /**
-     *
+     * Update a list of playlists on #playlists
      */
     static updatePlaylists() {
         const img2 = document.getElementById("playlists-img2");
@@ -339,13 +357,12 @@ class UpdateManager {
             });
             playlist_div.append(result);
         }
-        setupTheme();
     }
 }
 let manager;
 /**
- *
- * @param seconds
+ * Convert seconds to minutes:seconds
+ * @param seconds seconds
  */
 function secondsToTime(seconds) {
     seconds = Math.round(seconds);
@@ -367,7 +384,7 @@ async function select(index) {
     await setupAudio();
 }
 /**
- * load from settings manager.all_audio after app is starting
+ * Load from settings manager.all_audio after app is starting
  */
 async function setupAudio() {
     if (manager.settings.current_space === -1 && manager.settings.spaces.length > 0) {
@@ -395,26 +412,8 @@ async function setupAudio() {
     audio.volume = parseFloat(volume.value) / 100;
 }
 /**
- *
+ * Setups a current theme by changing a CSS variables
  */
-function showCurrentAudio() {
-    try {
-        const name = document.getElementById("label-name");
-        const author = document.getElementById("label-author");
-        const img = document.getElementById("footer-current-icon");
-        if (manager.playlist_audio[manager.current_audio_index].pictures) {
-            img.src = manager.playlist_audio[manager.current_audio_index].pictures;
-        }
-        else {
-            img.src = "assets/images/playlist_logo.svg";
-        }
-        name.textContent = manager.playlist_audio[manager.current_audio_index].name;
-        author.textContent = manager.playlist_audio[manager.current_audio_index].artist;
-    }
-    catch (e) {
-        console.log(e);
-    }
-}
 async function setupTheme() {
     const theme = await manager.api.getTheme();
     if (!theme[0]) {
@@ -465,227 +464,82 @@ async function setupTheme() {
     if (obj.styles.utils.reset_hover)
         root.style.setProperty("--reset-hover", obj.styles.utils.reset_hover);
     if (obj.styles.buttons.aside_hover)
-        console.log("hover");
-    root.style.setProperty("--aside-hover", obj.styles.buttons.aside_hover);
-    console.log(obj.styles.buttons.aside_hover);
+        root.style.setProperty("--aside-hover", obj.styles.buttons.aside_hover);
     await hoverButtons();
 }
+/**
+ * Use a current theme on buttons
+ */
 async function hoverButtons() {
     const theme = await manager.api.getTheme();
-    const buttons = document.querySelectorAll(".button");
-    console.log(buttons);
-    buttons.forEach((val) => {
-        let aside_color_hover = `#3e4045`;
-        let main_color_hover = `#2a2a2e`;
-        let fill_hover = "white";
-        let fill_base = `#D9D9D9`;
-        if (theme[0]) {
-            const obj = JSON.parse(theme[1]);
-            main_color_hover = obj.styles.buttons.main_hover;
-            aside_color_hover = obj.styles.buttons.aside_hover;
-            fill_base = obj.styles.buttons.fill_bg;
-            fill_hover = obj.styles.buttons.fill_hover;
-        }
-        const value = val;
-        const svg = value.querySelector("svg");
-        value.style.background = "transparent";
-        const path = svg.querySelector("path");
-        path.style.fill = fill_base;
-        path.style.stroke = fill_base;
-        value.addEventListener("mouseenter", () => {
-            if (value.classList.contains("aside")) {
-                value.style.background = aside_color_hover;
-            }
-            else {
-                value.style.background = main_color_hover;
-            }
-            path.style.fill = fill_hover;
-            path.style.stroke = fill_hover;
-        });
-        value.addEventListener("mouseleave", () => {
-            value.style.background = "transparent";
-            path.style.fill = fill_base;
-            path.style.stroke = fill_base;
-        });
-    });
     if (theme[0]) {
         const obj = JSON.parse(theme[1]);
+        const buttons = document.querySelectorAll(".button");
+        buttons.forEach((val) => {
+            let aside_color_hover = `#3e4045`;
+            let main_color_hover = `#2a2a2e`;
+            let fill_hover = "white";
+            let fill_base = `#D9D9D9`;
+            if (theme[0]) {
+                const obj = JSON.parse(theme[1]);
+                main_color_hover = obj.styles.buttons.main_hover;
+                aside_color_hover = obj.styles.buttons.aside_hover;
+                fill_base = obj.styles.buttons.fill_bg;
+                fill_hover = obj.styles.buttons.fill_hover;
+            }
+            const value = val;
+            const svg = value.querySelector("svg");
+            value.style.background = "transparent";
+            const path = svg.querySelector("path");
+            path.style.fill = fill_base;
+            path.style.stroke = fill_base;
+            value.addEventListener("mouseenter", () => {
+                if (value.classList.contains("aside")) {
+                    value.style.background = aside_color_hover;
+                }
+                else {
+                    value.style.background = main_color_hover;
+                }
+                path.style.fill = fill_hover;
+                path.style.stroke = fill_hover;
+            });
+            value.addEventListener("mouseleave", () => {
+                value.style.background = "transparent";
+                path.style.fill = fill_base;
+                path.style.stroke = fill_base;
+            });
+        });
         if (obj.styles.footer) {
             const bts = document.querySelectorAll(".footer-button");
             bts.forEach((bt) => {
-                const svg = bt.querySelector("svg");
-                const paths = svg.querySelectorAll("path");
-                paths.forEach((path) => {
-                    path.style.fill = obj.styles.footer.button;
-                    bt.addEventListener("mouseenter", () => {
-                        path.style.fill = obj.styles.footer.hover;
-                        path.style.color = obj.styles.footer.hover;
-                    });
-                    bt.addEventListener("mouseleave", () => {
+                const svg = bt.querySelectorAll("svg");
+                svg.forEach((v) => {
+                    const paths = v.querySelectorAll("path");
+                    paths.forEach((path) => {
                         path.style.fill = obj.styles.footer.button;
-                        path.style.color = obj.styles.footer.button;
+                    });
+                });
+                bt.addEventListener("mouseenter", () => {
+                    svg.forEach((v) => {
+                        const paths = v.querySelectorAll("path");
+                        paths.forEach((path) => {
+                            path.style.fill = obj.styles.footer.button;
+                            path.style.fill = obj.styles.footer.hover;
+                            path.style.color = obj.styles.footer.hover;
+                        });
+                    });
+                });
+                bt.addEventListener("mouseleave", () => {
+                    svg.forEach((v) => {
+                        const paths = v.querySelectorAll("path");
+                        paths.forEach((path) => {
+                            path.style.fill = obj.styles.footer.button;
+                            path.style.fill = obj.styles.footer.button;
+                            path.style.color = obj.styles.footer.button;
+                        });
                     });
                 });
             });
         }
     }
-}
-/**
- * Create a space widget
- * @param index {number} an index of space
- * @param space {ISpace} an object with properties of space
- * @returns {HTMLDivElement} a new widget
- */
-function spaceFabric(index, space) {
-    const { name, path } = space;
-    const body = document.createElement('div');
-    const _number = document.createElement("p");
-    const _name = document.createElement("p");
-    const _path = document.createElement("p");
-    body.classList.add("space-element");
-    _number.classList.add("space-element-number", "title");
-    _number.appendChild(document.createTextNode(index.toString()));
-    _name.classList.add("space-element-name", "title");
-    _name.appendChild(document.createTextNode(name));
-    _path.classList.add("space-element-path", "title");
-    _path.appendChild(document.createTextNode(path));
-    body.append(_number, _name, _path);
-    return body;
-}
-/**
- * Create an audio-widget that user can choose for append to a new playlist
- * @param index {number} an index of audio
- * @param meta {Meta} an object with properties of audio
- * @returns {HTMLDivElement} a new widget
- */
-function playlistsAudioFabric(index, meta) {
-    const body = document.createElement("div");
-    const checkbox = document.createElement("input");
-    const index_ = document.createElement("p");
-    const div = document.createElement("div");
-    const name = document.createElement("p");
-    const artist = document.createElement("p");
-    const album = document.createElement("p");
-    const duration = document.createElement("p");
-    const group = document.createElement("div");
-    const img = document.createElement("img");
-    body.classList.add("playlist-body");
-    checkbox.type = "checkbox";
-    checkbox.classList.add("playlist-body-checkbox");
-    index_.classList.add("playlist-body-index", "title");
-    index_.textContent = cutText(index.toString(), 15);
-    div.classList.add("playlist-body-pic-out");
-    img.src = meta.pictures ? meta.pictures : "assets/images/playlist_logo.svg";
-    div.append(img);
-    name.classList.add("playlist-body-name", "title");
-    name.textContent = cutText(`${meta.name}`, 15);
-    artist.classList.add("playlist-body-artist", "title");
-    artist.textContent = cutText(`${meta.artist}`, 15);
-    album.classList.add("playlist-body-album", "title");
-    album.textContent = cutText(`${meta.album}`, 15);
-    duration.classList.add("playlist-body-duration", "title");
-    duration.textContent = cutText(secondsToTime(meta.duration), 15);
-    group.classList.add("playlist-body-group");
-    group.append(checkbox, index_, div, name, artist, album);
-    body.append(group, duration);
-    return body;
-}
-/**
- * Cut text
- * @param text {string} a text that wil be cut
- * @param max {max} an index of last char in result
- * @returns {string} a cut up text
- */
-function cutText(text, max) {
-    return text.length > max ? text.substring(0, max) + "..." : text;
-}
-/**
- * Create a playlist-widget on mainpage
- * @param meta {IPlaylist} an object with properties of playlist
- * @param is_main deprecated argument
- * @returns {HTMLDivElement} a new widget
- */
-function playlistOnMainFabric(meta, is_main = false) {
-    const body = document.createElement("div");
-    const div = document.createElement("div");
-    const name = document.createElement("p");
-    const amount = document.createElement("p");
-    if (meta.icon) {
-        const pic = document.createElement("img");
-        pic.classList.add("main-playlist-body-pic");
-        pic.src = meta.icon;
-        div.append(pic);
-    }
-    body.classList.add("main-playlist-body");
-    div.classList.add("main-playlist-body-pic-out");
-    name.classList.add("main-playlist-name", "title");
-    name.textContent = meta.name;
-    amount.classList.add("main-playlist-amount", "sub-title");
-    if (is_main || meta.name === "__global__") {
-        name.textContent = "Все песни";
-        amount.textContent = manager.all_audio.length.toString() + " аудио";
-    }
-    else {
-        amount.textContent = meta.songs.length + " аудио";
-    }
-    body.append(div, name, amount);
-    return body;
-}
-/**
- * Create an audio widget
- * @param index {number} an index of audio
- * @param meta {Meta} an object with properties of audio
- * @returns {HTMLDivElement} a new widget
- *
- */
-function audioFabric(index, meta) {
-    const body = document.createElement("div");
-    body.classList.add("main-song");
-    const num = document.createElement("p");
-    num.classList.add("main-song-number", "title");
-    num.appendChild(document.createTextNode(`${index + 1}`));
-    const pic_outer = document.createElement("div");
-    pic_outer.classList.add("main-song-image-out");
-    const img = document.createElement("img");
-    img.classList.add("main-song-image");
-    if (meta.pictures) {
-        img.src = meta.pictures;
-    }
-    else {
-        img.src = "assets/images/playlist_logo.svg";
-    }
-    pic_outer.appendChild(img);
-    const name = document.createElement("p");
-    name.classList.add("main-song-name", "title");
-    name.textContent = meta.name;
-    const artist = document.createElement("p");
-    artist.classList.add("main-song-artist", "title");
-    artist.textContent = meta.artist;
-    const album = document.createElement("p");
-    album.classList.add("main-song-album", "title");
-    album.textContent = meta.album;
-    const duration = document.createElement("p");
-    duration.classList.add("main-song-duration", "title");
-    duration.textContent = secondsToTime(meta.duration ?? 0);
-    const group = document.createElement("div");
-    group.classList.add("main-song-group");
-    group.append(num, pic_outer, name, artist, album);
-    body.append(group, duration);
-    return body;
-}
-/**
- * Create a temporary message about error
- * @param name {string} a message of error
- */
-function errorFabric(name) {
-    const body = document.createElement("div");
-    body.classList.add("error");
-    const p = document.createElement("p");
-    p.classList.add("error-p");
-    p.textContent = name;
-    body.append(p);
-    manager.root.append(body);
-    setTimeout(() => {
-        body.remove();
-    }, 3000);
 }

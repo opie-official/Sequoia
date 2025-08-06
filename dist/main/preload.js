@@ -11,9 +11,6 @@ electron_1.contextBridge.exposeInMainWorld("__API__", {
     wrapWindow: () => {
         electron_1.ipcRenderer.send("system:wrap");
     },
-    // getPage: async (page: string): Promise<[boolean, string]> => {
-    //     return await ipcRenderer.invoke("display:page", page);
-    // },
     getAllSpaces: async () => {
         return await electron_1.ipcRenderer.invoke("system:all_spaces");
     },
@@ -46,5 +43,8 @@ electron_1.contextBridge.exposeInMainWorld("__API__", {
     },
     getTheme: async () => {
         return await electron_1.ipcRenderer.invoke("display:get_theme");
+    },
+    getThemes: async () => {
+        return await electron_1.ipcRenderer.invoke("display:get_themes");
     }
 });

@@ -1,12 +1,11 @@
 /**
  * @file render
+ * @author OPIE
  */
 
 
 
-/**
- *
- */
+
 document.addEventListener("DOMContentLoaded", async () => {
     const {__API__} = window;
     const settings = await __API__.getSettings();

@@ -6,21 +6,19 @@ import * as spaces from "./spaces"
 import {CHECK, UTILS} from "./utils";
 import getAllSpaces = UTILS.getAllSpaces;
 import {parseFiles, readMetaMP3, ExtendedMeta, saveMetaMP3} from "./metadata";
-import {importTheme} from "./themes"
+import {importTheme, getThemes} from "./themes"
+import getSettings = UTILS.getSettings;
+
 let __window_maximized__ = false;
 
 let win: BrowserWindow;
 let startWindow: BrowserWindow;
 
-
-/**
- *
- */
 namespace FABRICS {
 
 
     /**
-     *
+     * Creates a main window
      */
     export function createWindow() {
         const Screen = screen.getPrimaryDisplay();
@@ -46,7 +44,7 @@ namespace FABRICS {
     }
 
     /**
-     *
+     * Creates a start window
      */
     export function createStartWindow() {
         const Screen = screen.getPrimaryDisplay();
@@ -70,6 +68,8 @@ namespace FABRICS {
         });
     }
 }
+
+
 ipcMain.on("system:close", () => {
     const win_ = BrowserWindow.getFocusedWindow();
     if (win_) {
@@ -93,7 +93,10 @@ ipcMain.on("system:wrap", () => {
     if (win_) {
         win_.minimize();
     }
-})
+});
+ipcMain.on("system:settings_update", (_: IpcMainEvent, settings: utils.UTILS.ISettings) => {
+    utils.UTILS.saveSettings(settings);
+});
 ipcMain.handle("system:all_spaces", () => {
     return utils.UTILS.getAllSpaces()
 });
@@ -103,7 +106,7 @@ ipcMain.handle("system:settings", () => {
 
 
 });
-ipcMain.handle("system:space", (e: IpcMainInvokeEvent, name: string) => {
+ipcMain.handle("system:space", (_: IpcMainInvokeEvent, name: string) => {
     const spaces = getAllSpaces();
     return spaces.filter((elem) => {
         return elem.name === name
@@ -112,17 +115,13 @@ ipcMain.handle("system:space", (e: IpcMainInvokeEvent, name: string) => {
 ipcMain.handle("system:space_path", async () => {
     return await spaces.getDirectoryOfSpace();
 });
-ipcMain.handle("system:space_make", (e: IpcMainInvokeEvent, name: string, path: string) => {
+ipcMain.handle("system:space_make", (_: IpcMainInvokeEvent, name: string, path: string) => {
     utils.UTILS.createSpace(name, path)
     return utils.UTILS.getAllSpaces()
 });
-ipcMain.on("system:settings_update", (e: IpcMainEvent, settings: utils.UTILS.ISettings) => {
-    utils.UTILS.saveSettings(settings);
-});
-ipcMain.handle("system:music_meta", async (e: IpcMainInvokeEvent, path_: string) => {
+ipcMain.handle("system:music_meta", async (_: IpcMainInvokeEvent, path_: string) => {
     return parseFiles(path_);
 });
-
 ipcMain.handle("system:playlist_image", async () => {
     const res = await dialog.showOpenDialog({
         properties: ["openFile"],
@@ -148,46 +147,53 @@ ipcMain.handle("system:playlist_image", async () => {
 
     const result = `data:image/${ext};base64,${base}`;
     return [true, result];
-})
-
-
-ipcMain.handle("system:meta", (e: IpcMainInvokeEvent, path: string) => {
+});
+ipcMain.handle("system:meta", (_: IpcMainInvokeEvent, path: string) => {
     return readMetaMP3(path);
-})
-
-ipcMain.handle("system:save_meta", (e: IpcMainInvokeEvent, meta: ExtendedMeta) => {
+});
+ipcMain.handle("system:save_meta", (_: IpcMainInvokeEvent, meta: ExtendedMeta) => {
     return saveMetaMP3(meta);
-})
+});
 ipcMain.handle("display:get_theme", importTheme);
-/**
- *
- */
+ipcMain.handle("display:get_themes", getThemes);
+
+
 app.whenReady().then(() => {
     CHECK.startCheck();
     const ffmpeg_res = CHECK.checkFFMPEG();
+    const settings = getSettings();
+    if (settings.show_start_page) {
+        FABRICS.createStartWindow();
+        FABRICS.createWindow();
+        startWindow.once('ready-to-show', () => {
+            startWindow.show();
 
-    FABRICS.createStartWindow();
-    FABRICS.createWindow();
+            setTimeout(() => {
+                startWindow.close();
+            }, 2300);
+        });
+
+
+        startWindow.on("closed", () => {
+            win.show();
+
+        });
+    }else{
+        FABRICS.createWindow();
+
+        win.once("ready-to-show", ()=>{
+            win.show();
+
+        })
+    }
 
     if (!ffmpeg_res) {
         dialog.showMessageBox(win, {
             "message": "У вас не установлен FFMPEG. Вы не сможете редактировать теги аудио-файлов",
             type: "warning"
-        })
+        }).then()
     }
-    startWindow.once('ready-to-show', () => {
-        startWindow.show();
 
-        setTimeout(() => {
-            startWindow.close();
-        }, 2300);
-    });
-
-
-    startWindow.on("closed", () => {
-        win.show();
-
-    });
 });
 
 app.on("window-all-closed", () => {
