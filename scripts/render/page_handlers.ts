@@ -269,6 +269,8 @@ function footerToMain() {
     const footer_main = document.getElementById('selected-footer-main') as HTMLDivElement;
     const footer_right = document.getElementById("selected-footer-right") as HTMLDivElement;
 
+    const footer_main = document.getElementById('selected-footer-main') as HTMLDivElement;
+    const footer_right = document.getElementById("selected-footer-right") as HTMLDivElement;
 
     footer.id = "main-footer";
 
@@ -278,6 +280,7 @@ function footerToMain() {
 
 }
 
+}
 
 
 
