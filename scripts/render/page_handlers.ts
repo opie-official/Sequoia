@@ -73,6 +73,8 @@ async function selectedHandler() {
 async function equalizerHandler() {
     const equalizer_widget = document.querySelector("#equalizer-body") as HTMLDivElement;
     equalizer_widget.classList.remove("disabled");
+    equalizer_widget.classList.add("animation-1-start");
+    equalizer_widget.classList.remove("animation-1-end");
 
 
 }
@@ -281,8 +283,15 @@ function footerToMain() {
 
 
 
+async function syncHandler(){
+    manager.setupPage("sync");
+    const hash = await manager.api.createServer();
+    const p = document.getElementById("sync-key-key") as HTMLParagraphElement;
+    p.textContent = hash;
 
 
+
+}
 
 
 

@@ -150,7 +150,9 @@ interface API {
     getExtendedMeta: (path: string) => Promise<ExtendedMeta[]>,
     saveMeta: (meta: ExtendedMeta) => Promise<boolean>,
     getTheme: () => Promise<[boolean, string]>,
-    getThemes: () => Promise<[boolean, string[]]>
+    getThemes: () => Promise<[boolean, string[]]>,
+    returnAddress: (fn:any)=>any,
+    createServer:  ()=>Promise<string>
 
 }
 
@@ -575,6 +577,8 @@ function secondsToTime(seconds: number) {
  * @param index
  */
 async function select(index: number) {
+
+    completeFabric(`папка "${manager.getCurrentSpace().name}" выбрана`)
     manager.settings.current_space = index;
     manager.current_playlist_index = 0;
     manager.saveSettings();
@@ -583,6 +587,7 @@ async function select(index: number) {
     const p2 = document.getElementById("space-name") as HTMLParagraphElement;
     p2.textContent = manager.getCurrentSpace().name;
     await setupAudio();
+
 
 }
 

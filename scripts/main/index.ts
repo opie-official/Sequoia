@@ -8,6 +8,7 @@ import getAllSpaces = UTILS.getAllSpaces;
 import {parseFiles, readMetaMP3, ExtendedMeta, saveMetaMP3} from "./metadata";
 import {importTheme, getThemes} from "./themes"
 import getSettings = UTILS.getSettings;
+import {createServer} from "./server";
 
 let __window_maximized__ = false;
 
@@ -23,6 +24,7 @@ namespace FABRICS {
     export function createWindow() {
         const Screen = screen.getPrimaryDisplay();
         const {width, height} = Screen.workAreaSize;
+        console.log(width, height);
         win = new BrowserWindow({
             width: width,
             height: height,
@@ -156,12 +158,16 @@ ipcMain.handle("system:save_meta", (_: IpcMainInvokeEvent, meta: ExtendedMeta) =
 });
 ipcMain.handle("display:get_theme", importTheme);
 ipcMain.handle("display:get_themes", getThemes);
+ipcMain.handle("system:create_server", ()=>createServer(win))
+
 
 
 app.whenReady().then(() => {
     CHECK.startCheck();
     const ffmpeg_res = CHECK.checkFFMPEG();
     const settings = getSettings();
+
+
     if (settings.show_start_page) {
         FABRICS.createStartWindow();
         FABRICS.createWindow();
@@ -189,8 +195,8 @@ app.whenReady().then(() => {
 
     if (!ffmpeg_res) {
         dialog.showMessageBox(win, {
-            "message": "У вас не установлен FFMPEG. Вы не сможете редактировать теги аудио-файлов",
-            type: "warning"
+            "message": "У вас не установлен FFMPEG. Вы сможете спокойно слушать музыку, но  редактировать теги аудио-файлов у вас не получится",
+            type: "info"
         }).then()
     }
 

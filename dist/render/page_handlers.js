@@ -63,6 +63,8 @@ async function selectedHandler() {
 async function equalizerHandler() {
     const equalizer_widget = document.querySelector("#equalizer-body");
     equalizer_widget.classList.remove("disabled");
+    equalizer_widget.classList.add("animation-1-start");
+    equalizer_widget.classList.remove("animation-1-end");
 }
 /**
  * Change current page on #playlists for editing current playlist
@@ -214,4 +216,10 @@ function footerToMain() {
     footer_left.id = "footer-left";
     footer_main.id = "footer-main";
     footer_right.id = "footer-right";
+}
+async function syncHandler() {
+    manager.setupPage("sync");
+    const hash = await manager.api.createServer();
+    const p = document.getElementById("sync-key-key");
+    p.textContent = hash;
 }

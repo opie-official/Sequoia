@@ -151,12 +151,12 @@
 
 }
 
-#main-settings >svg {
+#main-settings > svg {
     width: 100%;
     aspect-ratio: 1/1;
 }
 
-#main-settings> svg>path{
+#main-settings > svg > path {
     fill: var(--svg);
     stroke: var(--svg);
 }
@@ -289,7 +289,8 @@
     border: 0 solid;
     outline: none;
 }
-#filters-sorting-p{
+
+#filters-sorting-p {
     color: var(--sub-title);
 }
 
@@ -748,11 +749,22 @@ input[type=range]::-webkit-slider-thumb {
     width: 100%;
 }
 
+@media (width >=1500px) and (height >900px) {
 .main-playlist-name {
     color: var(--title);
     font-size: 15pt;
 }
 
+}
+
+@media (width < 1500px) and (height <=900px) and (width >=1000px) and (height >= 600px) {
+.main-playlist-name {
+    color: var(--title);
+    font-size: 15pt;
+
+}
+
+}
 .main-playlist-amount {
     font-size: 10pt;
     color: var(--sub-title);

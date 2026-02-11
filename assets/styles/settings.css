@@ -51,12 +51,27 @@
     justify-content: center;
     align-items: center;
     gap: 10%;
+    overflow: auto;
+    &::-webkit-scrollbar{
+        width: 0;
+        height: 0;
+    }
 }
 
+#settings-main, #settings-sync{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10%;
+    width: 100%;
+    height: 30%;
+    border-bottom: 1px solid var(--aside);
+}
 
 #settings-start-page, #settings-theme{
-    width: 25%;
-    height: 5%;
+    width: 50%;
+    height: 15%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -64,7 +79,7 @@
 }
 
 #settings-start-input{
-    height: 90%;
+    height: 50%;
     aspect-ratio: 1/1;
 }
 #settings-start-page>p{
@@ -79,4 +94,19 @@
 #settings-theme>p{
     color: var(--title);
     font-size: 20pt;
+}
+
+
+.sync-button{
+    width: 25%;
+    height: 25%;
+    background: var(--main);
+    border: 1px solid var(--sub-title);
+    color: var(--title);
+    border-radius: 10px;
+    font-size: 20pt;
+    transition: all 0.2s;
+    &:hover{
+        background: var(--main-hover);
+    }
 }

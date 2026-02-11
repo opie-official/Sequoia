@@ -223,6 +223,8 @@ async function createNewSpace() {
         group.append(reject, accept);
         body.append(p, input, group);
         parent.append(body);
+        body.classList.add("animation-1-start");
+        body.classList.remove("animation-1-end");
     }
     /**
      * check and accept a creating of new space
@@ -237,7 +239,11 @@ async function createNewSpace() {
             body.remove();
             return;
         }
-        body.remove();
+        body.classList.remove("animation-1-start");
+        body.classList.add("animation-1-end");
+        setTimeout(() => {
+            body.remove();
+        }, 290);
         manager.settings.spaces.push({
             name: name,
             path: path[1],
@@ -257,7 +263,11 @@ async function createNewSpace() {
      * reject a creating new space
      */
     reject.addEventListener("click", function () {
-        body.remove();
+        body.classList.remove("animation-1-start");
+        body.classList.add("animation-1-end");
+        setTimeout(() => {
+            body.remove();
+        }, 290);
     });
 }
 /**
@@ -433,7 +443,11 @@ function bindButtons() {
     const equalizer_undo = document.getElementById("equalizer-undo");
     equalizer_undo.addEventListener("click", () => {
         const widget = document.querySelector("#equalizer-body");
-        widget.classList.add("disabled");
+        widget.classList.remove("animation-1-start");
+        widget.classList.add("animation-1-end");
+        setTimeout(() => {
+            widget.classList.add("disabled");
+        }, 290);
     });
     setupEqualizer();
     const playlist_logo = document.getElementById("playlists-logo");
@@ -670,6 +684,32 @@ function bindButtons() {
         manager.saveSettings();
         await mainHandler();
         completeFabric("Настройки сохранены");
+    });
+    const make_session = document.getElementById("session-make");
+    const make_session_undo = document.getElementById("session-make-undo");
+    make_session_undo.addEventListener("click", () => {
+        make_session.classList.add("animation-1-end");
+        setTimeout(() => {
+            make_session.classList.add("disabled");
+            make_session.classList.remove("animation-1-end");
+        }, 250);
+    });
+    const bt = document.getElementById("sync-make");
+    bt.addEventListener("click", () => {
+        make_session.classList.add("animation-1-start");
+        make_session.classList.remove("disabled");
+        setTimeout(() => {
+            make_session.classList.remove("animation-1-start");
+        }, 299);
+    });
+    const make_session_redo = document.getElementById("session-make-redo");
+    make_session_redo.addEventListener("click", async () => {
+        make_session.classList.add("animation-1-end");
+        setTimeout(() => {
+            make_session.classList.add("disabled");
+            make_session.classList.remove("animation-1-end");
+        }, 250);
+        await syncHandler();
     });
 }
 /**

@@ -185,35 +185,30 @@ async function setupFooter() {
                 return;
             }
             pause_button.click();
-        }
-        else if (event.code === "ArrowRight") {
+        } else if (event.code === "ArrowRight") {
             event.preventDefault();
             rewind_next.click();
-            duration.value =`${audio.currentTime}`;
-            p_duration.textContent= duration.value;
+            duration.value = `${audio.currentTime}`;
+            p_duration.textContent = duration.value;
 
-        }
-        else if (event.code === "ArrowLeft") {
+        } else if (event.code === "ArrowLeft") {
             event.preventDefault();
             rewind_prev.click();
-            duration.value =`${audio.currentTime}`;
-            p_duration.textContent= duration.value;
-        }
-        else if (event.code === "ArrowUp") {
+            duration.value = `${audio.currentTime}`;
+            p_duration.textContent = duration.value;
+        } else if (event.code === "ArrowUp") {
             event.preventDefault();
             volume_range.value = `${parseFloat(volume_range.value) + 5}`
             p_volume.textContent = volume_range.value;
-            audio.volume = parseFloat(volume_range.value)/100;
-        }
-        else if (event.code === "ArrowDown") {
+            audio.volume = parseFloat(volume_range.value) / 100;
+        } else if (event.code === "ArrowDown") {
             event.preventDefault();
             volume_range.value = `${parseFloat(volume_range.value) - 5}`
             p_volume.textContent = volume_range.value;
-            audio.volume = parseFloat(volume_range.value)/100;
+            audio.volume = parseFloat(volume_range.value) / 100;
 
 
-        }
-        else if (event.code === "Escape") {
+        } else if (event.code === "Escape") {
             event.preventDefault();
             const settings = document.getElementById("main-settings") as HTMLButtonElement;
             settings.click();
@@ -253,6 +248,8 @@ async function createNewSpace() {
         body.append(p, input, group);
 
         parent.append(body);
+        body.classList.add("animation-1-start");
+        body.classList.remove("animation-1-end");
     }
 
     /**
@@ -269,8 +266,14 @@ async function createNewSpace() {
             return;
         }
 
-        body.remove()
 
+        body.classList.remove("animation-1-start");
+        body.classList.add("animation-1-end");
+
+        setTimeout(() => {
+            body.remove()
+
+        }, 290);
         manager.settings.spaces.push({
             name: name,
             path: path[1],
@@ -299,7 +302,14 @@ async function createNewSpace() {
      * reject a creating new space
      */
     reject.addEventListener("click", function () {
-        body.remove()
+        body.classList.remove("animation-1-start");
+        body.classList.add("animation-1-end");
+
+        setTimeout(() => {
+            body.remove()
+
+        }, 290);
+
     })
 
 
@@ -315,7 +325,6 @@ function bindButtons() {
     })
 
     const main_playlists_button = document.getElementById("main-create-new-playlist") as HTMLButtonElement;
-
     main_playlists_button.addEventListener("click", async () => {
         if (manager.settings.current_space === -1) {
             errorFabric("Никакая папка не выбрана");
@@ -340,7 +349,6 @@ function bindButtons() {
     })
 
     const playlists_redo = document.getElementById("playlists-redo") as HTMLButtonElement;
-
     playlists_redo.addEventListener("click", async () => {
         if (!manager.is_playlist_edit) {
             if (manager.settings.current_space === -1) {
@@ -439,7 +447,6 @@ function bindButtons() {
 
 
     const playlist_delete = document.getElementById("main-create-delete-playlist") as HTMLButtonElement;
-
     playlist_delete.addEventListener("click", () => {
         if (manager.settings.current_space === -1) {
             errorFabric("Никакая папка не выбрана");
@@ -509,8 +516,6 @@ function bindButtons() {
 
 
     const equalizer = document.querySelector("#equalizer") as HTMLButtonElement;
-
-
     equalizer.addEventListener("click", async () => {
         await equalizerHandler();
     })
@@ -518,15 +523,17 @@ function bindButtons() {
     const equalizer_undo = document.getElementById("equalizer-undo") as HTMLButtonElement;
     equalizer_undo.addEventListener("click", () => {
         const widget = document.querySelector("#equalizer-body") as HTMLDivElement;
-        widget.classList.add("disabled");
+        widget.classList.remove("animation-1-start");
+        widget.classList.add("animation-1-end");
+        setTimeout(() => {
+            widget.classList.add("disabled");
+        }, 290);
     })
-
 
     setupEqualizer();
 
 
     const playlist_logo = document.getElementById("playlists-logo") as HTMLButtonElement;
-
     playlist_logo.addEventListener("click", async () => {
         const result = await manager.api.getPlaylistImage();
         if (!result[0]) {
@@ -799,7 +806,7 @@ function bindButtons() {
                 manager.settings.theme = val;
                 await setupTheme();
                 window.location.reload();
-                setTimeout(()=>{
+                setTimeout(() => {
                     completeFabric("Настройки сохранены");
 
                 }, 2000)
@@ -810,6 +817,34 @@ function bindButtons() {
         manager.saveSettings();
         await mainHandler();
         completeFabric("Настройки сохранены");
+    })
+    const make_session = document.getElementById("session-make") as HTMLDivElement;
+    const make_session_undo = document.getElementById("session-make-undo") as HTMLButtonElement;
+    make_session_undo.addEventListener("click", () => {
+        make_session.classList.add("animation-1-end");
+        setTimeout(() => {
+            make_session.classList.add("disabled");
+            make_session.classList.remove("animation-1-end")
+        }, 250);
+    })
+    const bt = document.getElementById("sync-make") as HTMLButtonElement;
+    bt.addEventListener("click", () => {
+        make_session.classList.add("animation-1-start");
+        make_session.classList.remove("disabled");
+        setTimeout(() => {
+            make_session.classList.remove("animation-1-start")
+        }, 299);
+    })
+
+
+    const make_session_redo = document.getElementById("session-make-redo") as HTMLButtonElement;
+    make_session_redo.addEventListener("click", async () => {
+        make_session.classList.add("animation-1-end");
+        setTimeout(() => {
+            make_session.classList.add("disabled");
+            make_session.classList.remove("animation-1-end")
+        }, 250);
+        await syncHandler();
     })
 }
 

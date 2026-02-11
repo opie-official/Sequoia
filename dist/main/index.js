@@ -43,6 +43,7 @@ var getAllSpaces = utils_1.UTILS.getAllSpaces;
 const metadata_1 = require("./metadata");
 const themes_1 = require("./themes");
 var getSettings = utils_1.UTILS.getSettings;
+const server_1 = require("./server");
 let __window_maximized__ = false;
 let win;
 let startWindow;
@@ -54,6 +55,7 @@ var FABRICS;
     function createWindow() {
         const Screen = electron_1.screen.getPrimaryDisplay();
         const { width, height } = Screen.workAreaSize;
+        console.log(width, height);
         win = new electron_1.BrowserWindow({
             width: width,
             height: height,
@@ -181,6 +183,7 @@ electron_1.ipcMain.handle("system:save_meta", (_, meta) => {
 });
 electron_1.ipcMain.handle("display:get_theme", themes_1.importTheme);
 electron_1.ipcMain.handle("display:get_themes", themes_1.getThemes);
+electron_1.ipcMain.handle("system:create_server", () => (0, server_1.createServer)(win));
 electron_1.app.whenReady().then(() => {
     utils_1.CHECK.startCheck();
     const ffmpeg_res = utils_1.CHECK.checkFFMPEG();
@@ -206,8 +209,8 @@ electron_1.app.whenReady().then(() => {
     }
     if (!ffmpeg_res) {
         electron_1.dialog.showMessageBox(win, {
-            "message": "У вас не установлен FFMPEG. Вы не сможете редактировать теги аудио-файлов",
-            type: "warning"
+            "message": "У вас не установлен FFMPEG. Вы сможете спокойно слушать музыку, но  редактировать теги аудио-файлов у вас не получится",
+            type: "info"
         }).then();
     }
 });

@@ -375,6 +375,7 @@ function secondsToTime(seconds) {
  * @param index
  */
 async function select(index) {
+    completeFabric(`папка "${manager.getCurrentSpace().name}" выбрана`);
     manager.settings.current_space = index;
     manager.current_playlist_index = 0;
     manager.saveSettings();

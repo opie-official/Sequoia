@@ -42,7 +42,7 @@ export async function parseFiles(path_: string): Promise<Meta[]> {
 
 
     const files = await readdir(path_);
-    const result: Meta[] = []
+    let result: Meta[] = []
     for (const file of files) {
         const path_to = path.join(path_, file);
         try {
@@ -58,7 +58,7 @@ export async function parseFiles(path_: string): Promise<Meta[]> {
                 pic = ""
             }
             result.push({
-                name: file.replace(".mp3", ""),//.length>25? file.replace(".mp3", "").slice(0, 22)+"..." : file.replace("mp3", ""),
+                name: meta.common.title?meta.common.title as string:file.replace(".mp3", ""),//.length>25? file.replace(".mp3", "").slice(0, 22)+"..." : file.replace("mp3", ""),
                 artist: meta.common.artist as string,
                 album: meta.common.album as string,
                 duration: meta.format.duration as number,
@@ -68,6 +68,7 @@ export async function parseFiles(path_: string): Promise<Meta[]> {
         } catch {
         }
     }
+    result= result.sort((a,b)=>a.name.localeCompare(b.name))
 
     return result;
 }
