@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "main": "dist/main/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
     "build:render": "tsc -p ./scripts/render/tsconfig.json",
     "build:main": "tsc -p ./scripts/main/tsconfig.json",
     "build": "npm run build:main && npm run build:render",
     "pack-amd": "electron-builder --x64  --win",
-    "pack-arm": "electron-builder --arm64 --win"
+    "pack-arm": "electron-builder --arm64 --win",
+    "pack": "electron-builder --linux --x64"
   },
   "build": {
     "appId": "github.opie.sequoia",
@@ -46,14 +46,13 @@
     "@types/animejs": "^3.1.13",
     "ffmetadata": "^1.7.0",
     "music-metadata": "^11.6.0",
+    "net": "^1.0.2",
     "node-id3": "^0.2.9"
   },
   "devDependencies": {
-    "@eslint/js": "^9.32.0",
     "electron": "^37.2.1",
     "electron-builder": "^26.0.12",
     "eslint": "^9.32.0",
-    "globals": "^16.3.0",
-    "typescript-eslint": "^8.38.0"
+    "globals": "^16.3.0"
   }
 }

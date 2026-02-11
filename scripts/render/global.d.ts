@@ -42,22 +42,24 @@ export interface ExtendedMeta {
 
 declare global {
     interface Window {
-        __API__: {
-            closeWindow: () => void
-            resizeWindow: () => void
-            wrapWindow: () => void,
-            getAllSpaces: () => Promise<ISpace[]>,
-            getSettings: () => Promise<ISettings>,
-            getSpace: (name: string) => Promise<ISpace>,
-            getSpacePath: () => Promise<[boolean, string]>,
-            makeSpace: (name: string, path: string) => Promise<ISpace[]>,
-            updateSettings: (settings: ISettings) => void,
-            getMusicMeta: (path: string) => Promise<any[]>,
-            getPlaylistImage: () => Promise<[boolean, string]>,
-            getExtendedMeta: (path: string) => Promise<ExtendedMeta[]>,
-            saveMeta: (meta: ExtendedMeta) => Promise<boolean>,
-            getTheme: ()=>Promise<[boolean, string]>,
-            getThemes: ()=>Promise<[boolean, string[]]>
-        }
+        // __API__: {
+        //     closeWindow: () => void
+        //     resizeWindow: () => void
+        //     wrapWindow: () => void,
+        //     getAllSpaces: () => Promise<ISpace[]>,
+        //     getSettings: () => Promise<ISettings>,
+        //     getSpace: (name: string) => Promise<ISpace>,
+        //     getSpacePath: () => Promise<[boolean, string]>,
+        //     makeSpace: (name: string, path: string) => Promise<ISpace[]>,
+        //     updateSettings: (settings: ISettings) => void,
+        //     getMusicMeta: (path: string) => Promise<any[]>,
+        //     getPlaylistImage: () => Promise<[boolean, string]>,
+        //     getExtendedMeta: (path: string) => Promise<ExtendedMeta[]>,
+        //     saveMeta: (meta: ExtendedMeta) => Promise<boolean>,
+        //     getTheme: ()=>Promise<[boolean, string]>,
+        //     getThemes: ()=>Promise<[boolean, string[]]>,
+        //     returnAddress: (fn:any)=>any
+        // }
+        __API__: API
     }
 }

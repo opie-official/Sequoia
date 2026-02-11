@@ -1,3 +1,10 @@
+@font-face {
+    font-family: Ubuntu;
+    src: url("assets/fonts/Ubuntu-Regular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+
 :root {
     --red: #C74444;
     --undo: #C74444;
@@ -59,7 +66,7 @@ html, body {
     background: var(--main-hover) !important;
 }
 
-.clicked>svg>path {
+.clicked > svg > path {
     fill: var(--footer-clicked) !important;
     stroke: var(--footer-clicked) !important;
 }
@@ -245,6 +252,39 @@ html, body {
 }
 
 
+.animation-1-start {
+    animation: anima-1 0.3s ease-in-out;
+
+}
+
+@keyframes anima-1 {
+    from {
+        opacity: 0;
+        transform: scale(0.1);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animation-1-end {
+    animation: anima-11 0.3s ease-in-out;
+
+}
+
+@keyframes anima-11 {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.1);
+    }
+}
+
+
 #equalizer-buttons {
     position: absolute;
     top: 2%;
@@ -355,18 +395,18 @@ hr {
     width: 3px;
 }
 
-.svg
-{
+.svg {
     color: var(--svg);
 }
-.svg path{
+
+.svg path {
     fill: currentColor;
 
     stroke: var(--svg) !important;
 }
 
 
-.warn{
+.warn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -374,3 +414,49 @@ hr {
     height: 100%;
 }
 
+
+#session-make {
+    position: absolute;
+    z-index: 30;
+    left: 25%;
+    top: 25%;
+    width: 50%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20%;
+    background: var(--main);
+    border-radius: 20px;
+    border: 1px solid var(--sub-title);
+}
+
+#session-make-p {
+    color: var(--title);
+    font-size: 20pt;
+}
+
+#session-make-group {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15%;
+}
+
+.session-make-bt {
+    width: 30%;
+    height: 30%;
+    border: 0 solid;
+    background: var(--main);
+    color: var(--sub-title);
+    font-size: 15pt;
+    transition: all 0.2s;
+    border-radius: 20px;
+
+    &:hover {
+        background: var(--main-hover);
+    }
+}

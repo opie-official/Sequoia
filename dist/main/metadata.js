@@ -49,7 +49,7 @@ const utils_1 = require("./utils");
  */
 async function parseFiles(path_) {
     const files = await (0, promises_1.readdir)(path_);
-    const result = [];
+    let result = [];
     for (const file of files) {
         const path_to = path.join(path_, file);
         try {
@@ -65,7 +65,7 @@ async function parseFiles(path_) {
                 pic = "";
             }
             result.push({
-                name: file.replace(".mp3", ""), //.length>25? file.replace(".mp3", "").slice(0, 22)+"..." : file.replace("mp3", ""),
+                name: meta.common.title ? meta.common.title : file.replace(".mp3", ""), //.length>25? file.replace(".mp3", "").slice(0, 22)+"..." : file.replace("mp3", ""),
                 artist: meta.common.artist,
                 album: meta.common.album,
                 duration: meta.format.duration,
@@ -76,6 +76,7 @@ async function parseFiles(path_) {
         catch {
         }
     }
+    result = result.sort((a, b) => a.name.localeCompare(b.name));
     return result;
 }
 /**

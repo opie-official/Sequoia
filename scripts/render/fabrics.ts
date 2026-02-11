@@ -69,7 +69,7 @@ function playlistsAudioFabric(index: number, meta: Meta): HTMLDivElement {
     artist.textContent = `${meta.artist}`;
 
     album.classList.add("playlist-body-album", "title")
-    album.textContent =`${meta.album}`;
+    album.textContent = `${meta.album}`;
 
     duration.classList.add("playlist-body-duration", "title");
     duration.textContent = secondsToTime(meta.duration);
@@ -83,7 +83,6 @@ function playlistsAudioFabric(index: number, meta: Meta): HTMLDivElement {
     return body;
 
 }
-
 
 
 /**
@@ -193,8 +192,6 @@ function errorFabric(name: string) {
 }
 
 
-
-
 /**
  * Create a temporary message about completed action
  * @param name {string} a message of error
@@ -213,3 +210,4 @@ function completeFabric(name: string) {
         body.remove();
     }, 3000);
 }
+
